@@ -15,50 +15,83 @@ def load_pickle(file_path: str) -> Dict:
         return pickle.load(file)
 
 def plot_group(parameter: str, metrics: Dict[str, tuple], output_path: str) -> None:
-    fig, axs = plt.subplots(len(metrics), 1, figsize=(10, 6 * len(metrics)))
+    fig, axs = plt.subplots(len(metrics), 2, figsize=(20, 6 * len(metrics)))
     if len(metrics) == 1:
         axs = [axs]
 
-    for ax, (metric_key, (title, y_label, color)) in zip(axs, metrics.items()):
-        full_metric_name = f"{metric_key}_{parameter}"
-        data = load_pickle(os.path.join(SENSITIVITY_DIR, f"{full_metric_name}.pkl"))
+    for ax_row, (metric_key, (title, y_label, color)) in zip(axs, metrics.items()):
+        full_metric_name_tillGS = f"{metric_key}_{parameter}_tillGS"
+        full_metric_name_full = f"{metric_key}_{parameter}_full"
+        
+        data_tillGS = load_pickle(os.path.join(SENSITIVITY_DIR, f"{full_metric_name_tillGS}.pkl"))
+        data_full = load_pickle(os.path.join(SENSITIVITY_DIR, f"{full_metric_name_full}.pkl"))
         
         # Special handling for list-type parameters
         if parameter in ['mom_window', 'half_life']:
             # Convert string keys like '[252]' to integers and sort
-            processed = []
-            for k, v in data.items():
+            processed_tillGS = []
+            for k, v in data_tillGS.items():
                 try:
                     # Remove brackets and convert to integer
                     num_val = int(k.strip('[]'))
-                    processed.append((num_val, k, v))
+                    processed_tillGS.append((num_val, k, v))
                 except:
-                    processed.append((float('inf'), k, v))
+                    processed_tillGS.append((float('inf'), k, v))
+            
+            processed_full = []
+            for k, v in data_full.items():
+                try:
+                    # Remove brackets and convert to integer
+                    num_val = int(k.strip('[]'))
+                    processed_full.append((num_val, k, v))
+                except:
+                    processed_full.append((float('inf'), k, v))
             
             # Sort by numeric value while keeping original string key
-            processed.sort(key=lambda x: x[0])
-            sorted_keys = [str(p[0]) for p in processed]  # Use numeric value as label
-            sorted_values = [p[2] for p in processed]
+            processed_tillGS.sort(key=lambda x: x[0])
+            processed_full.sort(key=lambda x: x[0])
+            
+            sorted_keys_tillGS = [str(p[0]) for p in processed_tillGS]  # Use numeric value as label
+            sorted_values_tillGS = [p[2] for p in processed_tillGS]
+            sorted_keys_full = [str(p[0]) for p in processed_full]  # Use numeric value as label
+            sorted_values_full = [p[2] for p in processed_full]
         else:
             # Standard numeric sorting for other parameters
             try:
-                keys = [float(k) if '.' in k else int(k) for k in data.keys()]
+                keys_tillGS = [float(k) if '.' in k else int(k) for k in data_tillGS.keys()]
             except:
-                keys = list(data.keys())
+                keys_tillGS = list(data_tillGS.keys())
             
-            values = list(data.values())
-            sorted_pairs = sorted(zip(keys, values), key=lambda x: x[0])
-            sorted_keys, sorted_values = zip(*sorted_pairs) if sorted_pairs else ([], [])
+            try:
+                keys_full = [float(k) if '.' in k else int(k) for k in data_full.keys()]
+            except:
+                keys_full = list(data_full.keys())
+            
+            values_tillGS = list(data_tillGS.values())
+            values_full = list(data_full.values())
+            
+            sorted_pairs_tillGS = sorted(zip(keys_tillGS, values_tillGS), key=lambda x: x[0])
+            sorted_pairs_full = sorted(zip(keys_full, values_full), key=lambda x: x[0])
+            
+            sorted_keys_tillGS, sorted_values_tillGS = zip(*sorted_pairs_tillGS) if sorted_pairs_tillGS else ([], [])
+            sorted_keys_full, sorted_values_full = zip(*sorted_pairs_full) if sorted_pairs_full else ([], [])
 
-        ax.plot(sorted_keys, sorted_values, marker='o', color=color)
-        ax.set_title(title)
-        ax.set_xlabel(parameter.replace('_', ' ').title())
-        ax.set_ylabel(y_label)
+        ax_row[0].plot(sorted_keys_tillGS, sorted_values_tillGS, marker='o', color=color, label='Till GS')
+        ax_row[0].set_title(title + " (Till GS)")
+        ax_row[0].set_xlabel(parameter.replace('_', ' ').title())
+        ax_row[0].set_ylabel(y_label)
+        
+        ax_row[1].plot(sorted_keys_full, sorted_values_full, marker='o', color=color, label='Full')
+        ax_row[1].set_title(title + " (Full)")
+        ax_row[1].set_xlabel(parameter.replace('_', ' ').title())
+        ax_row[1].set_ylabel(y_label)
         
         # Improve x-axis labels for list-type parameters
         if parameter in ['mom_window', 'half_life']:
-            ax.set_xticks(sorted_keys)
-            ax.set_xticklabels([str(p[0]) for p in processed])  # Show numeric values
+            ax_row[0].set_xticks(sorted_keys_tillGS)
+            ax_row[0].set_xticklabels([str(p[0]) for p in processed_tillGS])  # Show numeric values
+            ax_row[1].set_xticks(sorted_keys_full)
+            ax_row[1].set_xticklabels([str(p[0]) for p in processed_full])  # Show numeric values
 
     plt.tight_layout()
     plt.savefig(output_path)

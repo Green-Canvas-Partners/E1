@@ -21,7 +21,7 @@ from definitions.constants import (
     SELECTED_N_STOCK_CHOSE, SELECTED_N_STOCK_CHOSE_SENS, SELECTED_N_STOCK_POSITIVE,
     SELECTED_N_STOCK_POSITIVE_SENS, SELECTED_TOP_VOL_STOCKS, SELECTED_TOP_VOL_STOCKS_SENS,
     SENSITIVITY_COMBINED_DATA_CSV, SENSITIVITY_DIR, SENSITIVITY_STOCKS_DATA_ENRICHED_CSV,
-    START_DATE_DATA_DOWNLOAD, STOCKS_DATA_RAW_PKL
+    START_DATE_DATA_DOWNLOAD, STOCKS_DATA_RAW_PKL, DATES_SENS
 )
 
 from utils.custom import (
@@ -101,10 +101,13 @@ def run_sensitivity_test(
         mom=mom_window[0],
         half=half_life[0]
     )
+    ms=[]
+    for i in DATES_SENS:
+        metrics = calculate_metrics(returns=returns[returns.index<=i])
+        ms.append(metrics)
 
-    metrics = calculate_metrics(returns=returns)
-    log_test_parameters(params=locals(), metrics=metrics, logger=logging)
-    return metrics
+    log_test_parameters(params=locals(), metrics=ms[-1], logger=logging)
+    return ms
 
 if __name__ == "__main__":
     # Initial data loading and processing

@@ -39,7 +39,7 @@ def run_scripts(files_to_run: str):
 
 # Specify the full or relative paths of the files you want to run
 files_to_run = """
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/sensitivity_analysis/makeYearStocksPickles.py
+# /home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/sensitivity_analysis/makeYearStocksPickles.py
 /home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/sensitivity_analysis/sensitivityAnalysis.py
 /home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/sensitivity_analysis/plotSensValues.py
 """

@@ -24,7 +24,7 @@ from utils.custom import (
 
 if FOR_LIVE:
     # Step 1: Download bond data for specified tickers and date range
-    download_data(tickers=BOND_TICKERS, start_date=START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE, end_date=END_DATE_FOR_LIVE, output_file=SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL)
+    download_data(tickers=BOND_TICKERS, start_date=START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE, end_date=END_DATE_FOR_LIVE, bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL)
 else:
     # Step 1: Download bond data for specified tickers and date range
     download_data(tickers=BOND_TICKERS, start_date=START_DATE_DATA_DOWNLOAD, end_date=(pd.to_datetime(END_DATE_DATA_DOWNLOAD) + timedelta(days=1)).strftime('%Y-%m-%d'), bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_PKL)

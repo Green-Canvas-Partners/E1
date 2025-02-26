@@ -32,7 +32,8 @@ def download_data(*, tickers=BOND_TICKERS, start_date=START_DATE_DATA_DOWNLOAD, 
     data_frames = []
 
     for ticker in tickers:
-        data = yf.download(ticker, start=start_date, end=end_date)
+        data = yf.download(ticker, start=start_date, end=end_date, auto_adjust=False)
+        data = data.xs(ticker, axis=1, level='Ticker')
 
         # Calculate Volume Weighted Average Price (VWAP)
         data['VWAP'] = (
@@ -722,6 +723,14 @@ def run_parameter_sweep(*,
         'sortinos': {}
     }
 
+    results_full = {
+        'anrets': {},
+        'sharpes': {},
+        'maxdraws': {},
+        'calmars': {},
+        'sortinos': {}
+    }
+
     for value in parameter_values:
         params = default_params.copy()
         params[parameter_name] = value
@@ -732,10 +741,18 @@ def run_parameter_sweep(*,
             all_data_bonds=all_data_bonds
         )
 
-        for metric, result in zip(['anrets', 'sharpes', 'maxdraws', 'calmars', 'sortinos'], metrics):
+        for metric, result in zip(['anrets', 'sharpes', 'maxdraws', 'calmars', 'sortinos'], metrics[0]):
             results[metric][str(value)] = result
 
+        for metric, result in zip(['anrets', 'sharpes', 'maxdraws', 'calmars', 'sortinos'], metrics[1]):
+            results_full[metric][str(value)] = result
+
     for metric_name, data in results.items():
-        filename=f'{metric_name}_{parameter_name}.pkl'
+        filename=f'{metric_name}_{parameter_name}_tillGS.pkl'
+        with open(f'{SENSITIVITY_DIR}/{filename}', 'wb') as file:
+            pickle.dump(data, file)
+
+    for metric_name, data in results_full.items():
+        filename=f'{metric_name}_{parameter_name}_full.pkl'
         with open(f'{SENSITIVITY_DIR}/{filename}', 'wb') as file:
             pickle.dump(data, file)
