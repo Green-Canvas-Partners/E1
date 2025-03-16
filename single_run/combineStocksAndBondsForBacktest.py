@@ -12,7 +12,11 @@ sys.path.append(project_root)
 
 
 import pickle
-from definitions.constants import  EXP_WEIGHT, FOR_LIVE, SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, SELECTED_N_STOCK_CHOSE, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV, SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV, SINGLE_RUN_COMBINED_DATA_CSV, SINGLE_RUN_COMBINED_DATA_LIVE_CSV, SINGLE_RUN_LIVE_RETURNS_PKL, SINGLE_RUN_LIVE_STOCK_DICT_PKL, SINGLE_RUN_RETURNS_PKL, SINGLE_RUN_STOCK_DICT_PKL, SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV, SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV
+from definitions.constants import  (EXP_WEIGHT, FOR_LIVE, SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, SELECTED_N_STOCK_CHOSE, 
+                                    SINGLE_RUN_BONDS_DATA_ENRICHED_CSV, SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV, SINGLE_RUN_COMBINED_DATA_CSV, 
+                                    SINGLE_RUN_COMBINED_DATA_LIVE_CSV, SINGLE_RUN_LIVE_RETURNS_PKL, SINGLE_RUN_LIVE_STOCK_DICT_PKL, SINGLE_RUN_RETURNS_PKL, 
+                                    SINGLE_RUN_STOCK_DICT_PKL, SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV, SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV,
+                                    SELECTED_N_STOCK_POSITIVE)
 from utils.custom import calculate_returns, calculate_stock_selection, exponential_weights, load_and_preprocess_data
 
 import numpy as np
@@ -48,7 +52,7 @@ def main():
     ].sort_values('Date').reset_index(drop=True)
 
     # Step 3: Calculate stock selection based on momentum metrics
-    stock_dict = calculate_stock_selection(df = df)
+    stock_dict = calculate_stock_selection(df = df, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE)
 
     if FOR_LIVE:
         with open(SINGLE_RUN_LIVE_STOCK_DICT_PKL, 'wb') as file:

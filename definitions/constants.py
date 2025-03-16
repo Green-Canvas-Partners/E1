@@ -33,7 +33,7 @@ YEARSTOCKS={key: [] for key in [2005+1, 2006+1, 2007+1, 2008+1,2009+1, 2010+1,20
 2015+1, 2016+1, 2017+1, 2018+1, 2019+1, 2020+1, 2021+1, 2022+1, 2023+1, 2024+1]}#
 
 # Root directories
-ROOT_DIR = '/home/iyad/M1_SKELETON_DIR'
+ROOT_DIR = '/home/iyad/V1_DIR'
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
 
 # Paths for raw stock data
@@ -218,8 +218,8 @@ DV_QUANTILE_THRESHOLD = 0.75
 LEN_YEARS_DV_LOOKBACK = 2
 
 # Momentum and half-life settings
-MOMENTUM_WINDOWS = [30, 63, 90, 126, 150, 200, 252, 504]
-HALF_LIVES = [30, 63, 90, 126, 150, 200, 250]
+MOMENTUM_WINDOWS = [252] #30, 63, 90, 126, 150, 200, 252, 504
+HALF_LIVES = [250] #30, 42, 63, 90, 126, 150, 200, 250
 
 # Selection criteria
 SELECTED_TOP_VOL_STOCKS = 75

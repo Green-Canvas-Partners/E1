@@ -12,8 +12,12 @@ sys.path.append(project_root)
 
 
 import pickle
-from definitions.constants import  EXP_WEIGHT, FOR_LIVE, SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, SELECTED_N_STOCK_CHOSE, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV, SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV, SINGLE_RUN_COMBINED_DATA_CSV, SINGLE_RUN_COMBINED_DATA_LIVE_CSV, SINGLE_RUN_LIVE_RETURNS_PKL, SINGLE_RUN_LIVE_STOCK_DICT_PKL, SINGLE_RUN_RETURNS_PKL, SINGLE_RUN_STOCK_DICT_PKL, SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV, SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV
-from utils.custom import calculate_returns, calculate_stock_selection, exponential_weights, load_and_preprocess_data
+from definitions.constants import FOR_LIVE, SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, SINGLE_RUN_COMBINED_DATA_CSV, SINGLE_RUN_COMBINED_DATA_LIVE_CSV, SELECTED_N_STOCK_POSITIVE
+from definitions.constants_V import  (SELECTED_MULT_V, SELECTED_WEIGHT_V, EXP_WEIGHT_V, SELECTED_HALF_LIFE_WINDOW_V, SELECTED_MOM_WINDOW_V, SELECTED_N_STOCK_CHOSE_V, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V, 
+                                      SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V, SINGLE_RUN_COMBINED_DATA_CSV_V, SINGLE_RUN_COMBINED_DATA_LIVE_CSV_V, SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_V, 
+                                      SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_V, SINGLE_RUN_LIVE_STOCK_DICT_PKL_V, SINGLE_RUN_STOCK_DICT_PKL_V, SINGLE_RUN_LIVE_RETURNS_PKL_V, SINGLE_RUN_RETURNS_PKL_V,
+                                      SELECTED_N_STOCK_POSITIVE_V)
+from utils.custom import calculate_returns_V, calculate_stock_selection_V, exponential_weights, load_and_preprocess_data
 
 import numpy as np
 
@@ -35,45 +39,53 @@ def main():
     """
     # Step 1: Load and preprocess data from bonds and stocks
     if FOR_LIVE:
-        df = load_and_preprocess_data(file1 = SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV, file2 = SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV, FOR_LIVE = FOR_LIVE)
-        df.to_csv(SINGLE_RUN_COMBINED_DATA_LIVE_CSV, index=False)
+        df = load_and_preprocess_data(file1 = SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V, file2 = SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_V, FOR_LIVE = FOR_LIVE)
+        df.to_csv(SINGLE_RUN_COMBINED_DATA_LIVE_CSV_V, index=False)
+
+        df_M = pd.read_csv(SINGLE_RUN_COMBINED_DATA_LIVE_CSV)
     else:
-        df = load_and_preprocess_data(file1=SINGLE_RUN_BONDS_DATA_ENRICHED_CSV, file2=SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV, FOR_LIVE=FOR_LIVE)
-        df.to_csv(SINGLE_RUN_COMBINED_DATA_CSV, index=False)  # Save concatenated data to file
+        df = load_and_preprocess_data(file1=SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V, file2=SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_V, FOR_LIVE=FOR_LIVE)
+        df.to_csv(SINGLE_RUN_COMBINED_DATA_CSV_V, index=False)  # Save concatenated data to file
+
+        df_M = pd.read_csv(SINGLE_RUN_COMBINED_DATA_CSV)
 
         
     # Step 2: Filter and sort data to include only required columns
     df = df[
+        ['Date', f'Momentum_{SELECTED_MOM_WINDOW_V}_{SELECTED_HALF_LIFE_WINDOW_V}_{SELECTED_MULT_V}_{SELECTED_WEIGHT_V}', 'Stock', 'Returns']
+    ].sort_values('Date').reset_index(drop=True)
+
+    df_M = df_M[
         ['Date', f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}', 'Stock', 'Returns']
     ].sort_values('Date').reset_index(drop=True)
 
     # Step 3: Calculate stock selection based on momentum metrics
-    stock_dict = calculate_stock_selection(df = df)
+    stock_dict = calculate_stock_selection_V(df = df, df_M = df_M, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW_V, SELECTED_HALF_LIFE_WINDOW=SELECTED_HALF_LIFE_WINDOW_V, SELECTED_MULT=SELECTED_MULT_V, SELECTED_WEIGHT=SELECTED_WEIGHT_V, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE_V, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE_V, SELECTED_MOM_WINDOW_M=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW_M=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE_M=SELECTED_N_STOCK_POSITIVE)
 
     if FOR_LIVE:
-        with open(SINGLE_RUN_LIVE_STOCK_DICT_PKL, 'wb') as file:
+        with open(SINGLE_RUN_LIVE_STOCK_DICT_PKL_V, 'wb') as file:
             pickle.dump(stock_dict, file)
     else:
-        with open(SINGLE_RUN_STOCK_DICT_PKL, 'wb') as file:
+        with open(SINGLE_RUN_STOCK_DICT_PKL_V, 'wb') as file:
             pickle.dump(stock_dict, file)
 
     # Step 4: Determine portfolio weights
     # Exponential weights are used if EXP_WEIGHT is True, otherwise a near-uniform weight is applied.
     weights = exponential_weights(
-        length = SELECTED_N_STOCK_CHOSE, 
-        alpha= EXP_WEIGHT
+        length = SELECTED_N_STOCK_CHOSE_V, 
+        alpha= EXP_WEIGHT_V
     )
 
     # Step 5: Calculate portfolio returns
-    returns = calculate_returns(stock_dict = stock_dict, df = df, weights = weights, mom = SELECTED_MOM_WINDOW, half = SELECTED_HALF_LIFE_WINDOW)
+    returns = calculate_returns_V(stock_dict = stock_dict, df = df, weights = weights, mom = SELECTED_MOM_WINDOW_V, half = SELECTED_HALF_LIFE_WINDOW_V, mult = SELECTED_MULT_V, w = SELECTED_WEIGHT_V)
 
 
     if FOR_LIVE:
         # Step 6: Save returns to a pickle file
-        with open(SINGLE_RUN_LIVE_RETURNS_PKL, 'wb') as file:
+        with open(SINGLE_RUN_LIVE_RETURNS_PKL_V, 'wb') as file:
             pickle.dump(returns, file)
     else:
-        with open(SINGLE_RUN_RETURNS_PKL, 'wb') as file:
+        with open(SINGLE_RUN_RETURNS_PKL_V, 'wb') as file:
 
             pickle.dump(returns, file)
 

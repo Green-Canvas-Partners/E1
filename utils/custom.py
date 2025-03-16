@@ -1,6 +1,6 @@
 from datetime import timedelta
 import pandas as pd
-from definitions.constants import BOND_TICKERS, END_DATE_DATA_DOWNLOAD, SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, SELECTED_N_STOCK_CHOSE, SELECTED_N_STOCK_POSITIVE, START_DATE_DATA_DOWNLOAD
+from definitions.constants import BOND_TICKERS, END_DATE_DATA_DOWNLOAD, START_DATE_DATA_DOWNLOAD
 import yfinance as yf
 import math
 import pickle
@@ -174,6 +174,121 @@ def process_single_dataframe(*, df, momentum_windows, half_lives, number=0):
                 momentum_df.set_index('Date', inplace=True)
                 momentum_dfs.append(momentum_df[[f'Momentum_{window}_{half_life}']])
             counter += 1
+
+    combined_df = pd.concat(momentum_dfs, axis=1)
+    combined_df['Stock'] = ticker
+    combined_df.sort_index(inplace=True)
+    return combined_df
+
+def resid_vol(dat, half_life, num):
+    arr = []
+    for i in np.arange(num-1):   #num==252
+        val = (dat[i+1]/dat[i] - 1) * math.exp(-num/half_life + i/half_life) * 100
+        arr = np.append(arr, val)
+    return arr
+
+def vol(*, dat, half_life, mult, weight):
+    """
+    Calculate vol using logarithmic returns and exponential weighting.
+
+    Args:
+        point (pd.Series): Series of stock prices.
+        half_life (int): Exponential decay parameter.
+
+    Returns:
+        float: Calculated vol value.
+    """
+    num = len(dat)
+    vol_42 = resid_vol(dat, half_life, num)
+    vol_63 = resid_vol(dat, half_life*mult, num)
+
+    vol_42_p = vol_42[vol_42>0]
+    vol_63_p = vol_63[vol_63>0]
+
+    vol_42_n = vol_42[vol_42<0]
+    vol_63_n = vol_63[vol_63<0]
+
+    sigma1 = ((np.std(vol_42_p))-(np.std(vol_42_n)))
+    sigma2 = ((np.std(vol_63_p))-(np.std(vol_63_n)))
+    score = weight * sigma1 + (1-weight) * sigma2  #resiid --> calculate score
+    return score
+
+def calculate_monthly_vol(*, df, close_col_name, open_col_name, close_col_name_shift, open_col_name_shift, window, half_life, mult, weight, number=0):
+    """
+    Calculate monthly vol for a given DataFrame.
+
+    Args:
+        df (pd.DataFrame): Stock data DataFrame.
+        close_col_name (str): Column name for Close prices.
+        open_col_name (str): Column name for Open prices.
+        close_col_name_shift (str): Column name for shifted Close prices.
+        open_col_name_shift (str): Column name for shifted Open prices.
+        window (int): Lookback window for vol calculation.
+        half_life (int): Half-life parameter for exponential weighting.
+
+    Returns:
+        pd.DataFrame: DataFrame containing vol values and associated metrics.
+    """
+    tail = len(df)
+    momentum_values = []
+
+    while tail - window > 0:
+        tail = tail - number
+
+        last_date = df.iloc[tail - 1].name
+        last_close = df[close_col_name].iloc[tail - 1]
+        last_open = df[open_col_name].iloc[tail - 1]
+        last_close_shift = df[close_col_name_shift].iloc[tail - 1]
+        last_open_shift = df[open_col_name_shift].iloc[tail - 1]
+
+        window_data = df[close_col_name].iloc[tail - window: tail]
+        mom_value = vol(dat = window_data, half_life = half_life, mult = mult, weight = weight)
+        momentum_values.append((last_date, mom_value, last_close, last_open, last_close_shift, last_open_shift))
+
+        tail -= 1
+        current_month = df.iloc[tail].name.month
+        while df.iloc[tail - 1].name.month == current_month:
+            tail -= 1
+
+    return pd.DataFrame(momentum_values, columns=['Date', f'Momentum_{window}_{half_life}_{mult}_{weight}', 'Close', 'Open', 'Close_shift', 'Open_shift'])
+
+def process_single_dataframe_V(*, df, momentum_windows, half_lives, mult, weight, number=0):
+    """
+    Process a single DataFrame to calculate momentum metrics.
+
+    Args:
+        df (pd.DataFrame): Stock data DataFrame.
+        momentum_windows (list): List of momentum windows to use.
+        half_lives (list): List of half-lives to use.
+
+    Returns:
+        pd.DataFrame: DataFrame with combined momentum metrics.
+    """
+    ticker = [col.split('_')[0] for col in df.columns if '_Close' in col][0]
+    close_col_name = f"{ticker}_Close"
+    open_col_name = f"{ticker}_Open"
+    close_col_name_shift = f"{ticker}_Close_shift"
+    open_col_name_shift = f"{ticker}_Open_shift"
+
+    momentum_dfs = []
+    counter = 0
+    for window in momentum_windows:
+        for half_life in half_lives:
+            for mu in mult:
+                for w in weight:
+                    if counter == 0:
+                        momentum_df = calculate_monthly_vol(
+                            df = df, close_col_name=close_col_name, open_col_name=open_col_name, close_col_name_shift=close_col_name_shift, open_col_name_shift=open_col_name_shift, window=window, half_life=half_life, mult=mu, weight=w, number=number
+                        )
+                        momentum_df.set_index('Date', inplace=True)
+                        momentum_dfs.append(momentum_df)
+                    else:
+                        momentum_df = calculate_monthly_vol(
+                            df = df, close_col_name = close_col_name, open_col_name = open_col_name, close_col_name_shift = close_col_name_shift, open_col_name_shift = open_col_name_shift, window = window, half_life = half_life, mult=mu, weight=w, number = number
+                        )
+                        momentum_df.set_index('Date', inplace=True)
+                        momentum_dfs.append(momentum_df[[f'Momentum_{window}_{half_life}_{mu}_{w}']])
+                    counter += 1
 
     combined_df = pd.concat(momentum_dfs, axis=1)
     combined_df['Stock'] = ticker
@@ -390,7 +505,7 @@ def calculate_metrics(*, returns):
     return annual_return, sharpe_ratio, max_drawdown_value, calmar_ratio, sortino_ratio
 
 
-def calculate_stock_selection(*, df, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE):
+def calculate_stock_selection(*, df, SELECTED_MOM_WINDOW=252, SELECTED_HALF_LIFE_WINDOW=252, SELECTED_N_STOCK_POSITIVE=3, SELECTED_N_STOCK_CHOSE=1):
     """
     Select stocks based on their momentum values.
 
@@ -417,6 +532,37 @@ def calculate_stock_selection(*, df, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW, SE
 
     return stock_dict
 
+def calculate_stock_selection_V(*, df, df_M, SELECTED_MOM_WINDOW=252, SELECTED_HALF_LIFE_WINDOW=252, SELECTED_MULT=1.01, SELECTED_WEIGHT=0.9, SELECTED_N_STOCK_POSITIVE=3, SELECTED_N_STOCK_CHOSE=1, SELECTED_MOM_WINDOW_M=252, SELECTED_HALF_LIFE_WINDOW_M=252, SELECTED_N_STOCK_POSITIVE_M=3):
+    """
+    Select stocks based on their momentum values.
+
+    Args:
+        df (pd.DataFrame): DataFrame with stock data and momentum metrics.
+        SELECTED_MOM_WINDOW (int): Selected momentum window.
+        SELECTED_HALF_LIFE_WINDOW (int): Selected half-life window.
+        SELECTED_N_STOCK_POSITIVE (int): Minimum number of stocks with positive momentum.
+        SELECTED_N_STOCK_CHOSE (int): Number of top stocks to select.
+
+    Returns:
+        dict: Dictionary with dates as keys and selected stocks as values.
+    """
+    dt = np.array(df[df.Stock == 'SPY'].Date)
+    stock_dict = {}
+
+    for i in dt:
+        tmp = df[df.Date == i].copy()
+        sorted_tmp = tmp.sort_values(f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}_{SELECTED_MULT}_{SELECTED_WEIGHT}', ascending=False).drop_duplicates()
+        positive_momentum_stocks = sorted_tmp[sorted_tmp[f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}_{SELECTED_MULT}_{SELECTED_WEIGHT}'] > 0]
+
+        tmp_M = df_M[df_M.Date == i].copy()
+        sorted_tmp_M = tmp_M.sort_values(f'Momentum_{SELECTED_MOM_WINDOW_M}_{SELECTED_HALF_LIFE_WINDOW_M}', ascending=False).drop_duplicates()
+        positive_momentum_stocks_M = sorted_tmp_M[sorted_tmp_M[f'Momentum_{SELECTED_MOM_WINDOW_M}_{SELECTED_HALF_LIFE_WINDOW_M}'] > 0]
+
+        # Select top stocks with positive momentum
+        stock_dict[i] = positive_momentum_stocks.head(SELECTED_N_STOCK_CHOSE).Stock.values if ((len(positive_momentum_stocks) >= SELECTED_N_STOCK_POSITIVE) and (len(positive_momentum_stocks_M) >= SELECTED_N_STOCK_POSITIVE_M)) else np.array([])
+
+    return stock_dict
+
 
 def calculate_returns(*, stock_dict, df, weights, mom, half):
     """
@@ -435,6 +581,33 @@ def calculate_returns(*, stock_dict, df, weights, mom, half):
         tmp = df[df.Date == date].copy()
         tmp = tmp[tmp['Stock'].isin(stocks)]
         tmp = tmp.sort_values(by=f'Momentum_{mom}_{half}', ascending=True)
+
+        if len(tmp) == 0:
+            returns[date] = 0
+        else:
+            tmp['weights'] = weights
+            tmp['w_rets'] = tmp['weights'] * tmp['Returns']
+            returns[date] = tmp['w_rets'].sum()
+
+    return pd.Series(returns) * 100
+
+def calculate_returns_V(*, stock_dict, df, weights, mom, half, mult, w):
+    """
+    Calculate portfolio returns based on selected stocks and weights.
+
+    Args:
+        stock_dict (dict): Dictionary with dates as keys and selected stocks as values.
+        df (pd.DataFrame): DataFrame containing stock data.
+        weights (list): List of weights for the selected stocks.
+
+    Returns:
+        pd.Series: Series of portfolio returns.
+    """
+    returns = {}
+    for date, stocks in stock_dict.items():
+        tmp = df[df.Date == date].copy()
+        tmp = tmp[tmp['Stock'].isin(stocks)]
+        tmp = tmp.sort_values(by=f'Momentum_{mom}_{half}_{mult}_{w}', ascending=True)
 
         if len(tmp) == 0:
             returns[date] = 0

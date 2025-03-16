@@ -11,37 +11,40 @@ project_root = os.path.join(project_root, '..')  # Move one level up to the root
 sys.path.append(project_root)
 
 # Import constants and custom utility functions
-from definitions.constants import (
-    BOND_TICKERS, START_DATE_DATA_DOWNLOAD, END_DATE_DATA_DOWNLOAD, MOMENTUM_WINDOWS, 
-    HALF_LIVES, YEARS, SINGLE_RUN_BONDS_DATA_RAW_PKL, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV, N_JOBS, FOR_LIVE, 
-    START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE, END_DATE_FOR_LIVE, SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL, 
-    SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV
+from definitions.constants_V import (
+    MOMENTUM_WINDOWS_V, HALF_LIVES_V, SINGLE_RUN_BONDS_DATA_RAW_PKL_V, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V, 
+    SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V, SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V, MULT_V, WEIGHT_V
 )
+from definitions.constants import (
+    BOND_TICKERS, START_DATE_DATA_DOWNLOAD, END_DATE_DATA_DOWNLOAD, YEARS, N_JOBS, FOR_LIVE, 
+    START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE, END_DATE_FOR_LIVE
+)
+
 from utils.custom import (
     download_data, add_shift_columns_to_all, 
-    process_single_dataframe, makeFinalDf
+    process_single_dataframe_V, makeFinalDf
 )
 
 if FOR_LIVE:
     # Step 1: Download bond data for specified tickers and date range
-    download_data(tickers=BOND_TICKERS, start_date=START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE, end_date=END_DATE_FOR_LIVE, bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL)
+    download_data(tickers=BOND_TICKERS, start_date=START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE, end_date=END_DATE_FOR_LIVE, bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V)
 else:
     # Step 1: Download bond data for specified tickers and date range
-    download_data(tickers=BOND_TICKERS, start_date=START_DATE_DATA_DOWNLOAD, end_date=(pd.to_datetime(END_DATE_DATA_DOWNLOAD) + timedelta(days=1)).strftime('%Y-%m-%d'), bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_PKL)
+    download_data(tickers=BOND_TICKERS, start_date=START_DATE_DATA_DOWNLOAD, end_date=(pd.to_datetime(END_DATE_DATA_DOWNLOAD) + timedelta(days=1)).strftime('%Y-%m-%d'), bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_PKL_V)
 
 if FOR_LIVE:
-    with open(SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL, 'rb') as f:
+    with open(SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V, 'rb') as f:
         all_data_bonds = pickle.load(f)
 else:
     # Step 2: Load the raw bond data from a pickle file
-    with open(SINGLE_RUN_BONDS_DATA_RAW_PKL, 'rb') as f:
+    with open(SINGLE_RUN_BONDS_DATA_RAW_PKL_V, 'rb') as f:
         all_data_bonds = pickle.load(f)
 
 # Step 3: Add shift columns to the loaded bond data
 all_data_bonds = add_shift_columns_to_all(all_data = all_data_bonds)
 
 # Main function
-def main(momentum_windows, half_lives, years, all_data, selected_stocks):
+def main(momentum_windows, half_lives, mult, weight, years, all_data, selected_stocks):
     """
     Main function to process bond data.
 
@@ -63,7 +66,7 @@ def main(momentum_windows, half_lives, years, all_data, selected_stocks):
 
     # Step 5: Process each filtered DataFrame in parallel
     parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe)(df = df.copy(), momentum_windows=momentum_windows, half_lives = half_lives) 
+        delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows=momentum_windows, half_lives = half_lives, mult=mult, weight=weight) 
         for df in filtered_data
     )
 
@@ -72,9 +75,9 @@ def main(momentum_windows, half_lives, years, all_data, selected_stocks):
 
     # Step 7: Save the final DataFrame to a CSV file
     if FOR_LIVE:
-        filename = SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV
+        filename = SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V
     else:
-        filename = SINGLE_RUN_BONDS_DATA_ENRICHED_CSV
+        filename = SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V
     final_df.to_csv(filename, index=False)
     print(f'Data processing complete. Results saved to: {filename}')
 
@@ -86,8 +89,10 @@ if __name__ == "__main__":
     calculations, and saves the enriched data to a CSV file.
     """
     main(
-        MOMENTUM_WINDOWS, 
-        HALF_LIVES, 
+        MOMENTUM_WINDOWS_V, 
+        HALF_LIVES_V, 
+        MULT_V,
+        WEIGHT_V,
         YEARS, 
         all_data_bonds, 
         BOND_TICKERS

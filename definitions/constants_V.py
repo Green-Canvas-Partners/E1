@@ -1,76 +1,41 @@
 from datetime import datetime, timedelta
 import os
 
-# General configuration
-N_JOBS = 28
-FOR_LIVE=False
-
-# Date range for analysis, last year of this range would be one less than the YEARSTOCKS below
-YEARS = range(2004, 2025)#2004
-
-# For Data Downloading Script
-# API Key
-API_KEY = '7J0OvsRHy0svTgU30022h58Y04nPds2s'
-
-# Date range
-START_DATE_GET_TICKERS = '2005-01-01'
-START_DATE_DATA_DOWNLOAD = '2005-01-01'
-END_DATE_DATA_DOWNLOAD = '2025-02-16'
-
-START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE='2022-01-01'
-END_DATE_FOR_LIVE=(datetime.now() + timedelta(days=10)).strftime('%Y-%m-%d')
-
-# Chunk size for processing tickers
-CHUNK_SIZE = 50
-
-# Bond-related constants
-BOND_TICKERS = [
-    "TLT", "IEF", "LQD", "AGG", "DBC", "GSG", "GLD", "BND", "VNQ", "HYG", "EFA", "SLV", "UCO", "DBA",
-    "ETHA", "ARKB"
-]
-
-YEARSTOCKS={key: [] for key in [2005+1, 2006+1, 2007+1, 2008+1,2009+1, 2010+1,2011+1, 2012+1, 2013+1, 2014+1,
-2015+1, 2016+1, 2017+1, 2018+1, 2019+1, 2020+1, 2021+1, 2022+1, 2023+1, 2024+1]}#
-
 # Root directories
-ROOT_DIR = '/home/iyad/M1_SKELETON_DIR'
-DATA_DIR = os.path.join(ROOT_DIR, 'data')
-
-# Paths for raw stock data
-STOCKS_DATA_RAW_PKL = '/mnt/spare8tb/all_dataframes_sequential.pkl'#'/mnt/spare8tb/all_dataframes_sequential.pkl'
-STOCKS_DATA_RAW_LIVE_PKL = '/mnt/spare8tb/all_dataframes_sequential_for_live.pkl'
+ROOT_DIR = '/home/iyad/V1_DIR'
+DATA_DIR_V = os.path.join(ROOT_DIR, 'data_V')
 
 # single run dirs
-SINGLE_RUN_DIR = os.path.join(DATA_DIR, 'single_run')
-SINGLE_RUN_BONDS_DIR = os.path.join(SINGLE_RUN_DIR, 'bonds')
-SINGLE_RUN_STOCKS_DIR = os.path.join(SINGLE_RUN_DIR, 'stocks')
-SINGLE_RUN_COMBINED_DIR = os.path.join(SINGLE_RUN_DIR, 'combined')
+SINGLE_RUN_DIR_V = os.path.join(DATA_DIR_V, 'single_run')
+SINGLE_RUN_BONDS_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'bonds')
+SINGLE_RUN_STOCKS_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'stocks')
+SINGLE_RUN_COMBINED_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'combined')
 
 # diff rebalancing dirs
-DIFF_REBALANCING_DIR = os.path.join(DATA_DIR, 'different_rebalancing_dates')
-DIFF_REBALANCING_BONDS_DIR = os.path.join(DIFF_REBALANCING_DIR, 'bonds')
-DIFF_REBALANCING_STOCKS_DIR = os.path.join(DIFF_REBALANCING_DIR, 'stocks')
-DIFF_REBALANCING_COMBINED_DIR = os.path.join(DIFF_REBALANCING_DIR, 'combined')
-DIFF_REBALANCING_PICASSO_DIR = os.path.join(DIFF_REBALANCING_DIR, 'picasso')
+DIFF_REBALANCING_DIR_V = os.path.join(DATA_DIR_V, 'different_rebalancing_dates')
+DIFF_REBALANCING_BONDS_DIR_V = os.path.join(DIFF_REBALANCING_DIR_V, 'bonds')
+DIFF_REBALANCING_STOCKS_DIR_V = os.path.join(DIFF_REBALANCING_DIR_V, 'stocks')
+DIFF_REBALANCING_COMBINED_DIR_V = os.path.join(DIFF_REBALANCING_DIR_V, 'combined')
+DIFF_REBALANCING_PICASSO_DIR_V = os.path.join(DIFF_REBALANCING_DIR_V, 'picasso')
 
 # sensitivity dirs
-SENSITIVITY_DIR = os.path.join(DATA_DIR, 'sensitivity_analysis')
-SENSITIVITY_BONDS_DIR = os.path.join(SENSITIVITY_DIR, 'bonds')
-SENSITIVITY_STOCKS_DIR = os.path.join(SENSITIVITY_DIR, 'stocks')
-SENSITIVITY_COMBINED_DIR = os.path.join(SENSITIVITY_DIR, 'combined')
+SENSITIVITY_DIR_V = os.path.join(DATA_DIR_V, 'sensitivity_analysis')
+SENSITIVITY_BONDS_DIR_V = os.path.join(SENSITIVITY_DIR_V, 'bonds')
+SENSITIVITY_STOCKS_DIR_V = os.path.join(SENSITIVITY_DIR_V, 'stocks')
+SENSITIVITY_COMBINED_DIR_V = os.path.join(SENSITIVITY_DIR_V, 'combined')
 
 # GS dirs
-GS_DIR = os.path.join(DATA_DIR, 'grid_search')
-GS_BONDS_DIR = os.path.join(GS_DIR, 'bonds')
-GS_STOCKS_DIR = os.path.join(GS_DIR, 'stocks')
-GS_COMBINED_DIR = os.path.join(GS_DIR, 'combined')
+GS_DIR_V = os.path.join(DATA_DIR_V, 'grid_search')
+GS_BONDS_DIR_V = os.path.join(GS_DIR_V, 'bonds')
+GS_STOCKS_DIR_V = os.path.join(GS_DIR_V, 'stocks')
+GS_COMBINED_DIR_V = os.path.join(GS_DIR_V, 'combined')
 
 # Create directories if they do not exist
 dirs_to_create = [
-    SINGLE_RUN_DIR, SINGLE_RUN_BONDS_DIR, SINGLE_RUN_STOCKS_DIR, SINGLE_RUN_COMBINED_DIR,
-    DIFF_REBALANCING_DIR, DIFF_REBALANCING_BONDS_DIR, DIFF_REBALANCING_STOCKS_DIR, DIFF_REBALANCING_COMBINED_DIR, DIFF_REBALANCING_PICASSO_DIR,
-    SENSITIVITY_DIR, SENSITIVITY_BONDS_DIR, SENSITIVITY_STOCKS_DIR, SENSITIVITY_COMBINED_DIR,
-    GS_DIR, GS_BONDS_DIR, GS_STOCKS_DIR, GS_COMBINED_DIR
+    SINGLE_RUN_DIR_V, SINGLE_RUN_BONDS_DIR_V, SINGLE_RUN_STOCKS_DIR_V, SINGLE_RUN_COMBINED_DIR_V,
+    DIFF_REBALANCING_DIR_V, DIFF_REBALANCING_BONDS_DIR_V, DIFF_REBALANCING_STOCKS_DIR_V, DIFF_REBALANCING_COMBINED_DIR_V, DIFF_REBALANCING_PICASSO_DIR_V,
+    SENSITIVITY_DIR_V, SENSITIVITY_BONDS_DIR_V, SENSITIVITY_STOCKS_DIR_V, SENSITIVITY_COMBINED_DIR_V,
+    GS_DIR_V, GS_BONDS_DIR_V, GS_STOCKS_DIR_V, GS_COMBINED_DIR_V
 ]
 
 for directory in dirs_to_create:
@@ -79,64 +44,62 @@ for directory in dirs_to_create:
 
 # single run
 # Paths for returns and stock dicts and year stocks in single run
-SINGLE_RUN_LIVE_STOCK_DICT_PKL = os.path.join(SINGLE_RUN_DIR, 'stock_dict_for_live.pkl')
-SINGLE_RUN_STOCK_DICT_PKL = os.path.join(SINGLE_RUN_DIR, 'stock_dict.pkl')
+SINGLE_RUN_LIVE_STOCK_DICT_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stock_dict_for_live.pkl')
+SINGLE_RUN_STOCK_DICT_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stock_dict.pkl')
 
-SINGLE_RUN_YEARSTOCKS_PKL = os.path.join(SINGLE_RUN_DIR, 'stockstobeused1.pkl')
-SINGLE_RUN_YEARSTOCKS_LIVE_PKL = os.path.join(SINGLE_RUN_DIR, 'stockstobeused1_for_live.pkl')
-
-SINGLE_RUN_RETURNS_PKL = os.path.join(SINGLE_RUN_DIR, 'returns.pkl')
-SINGLE_RUN_LIVE_RETURNS_PKL = os.path.join(SINGLE_RUN_DIR, 'returns_for_live.pkl')
-
+SINGLE_RUN_YEARSTOCKS_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stockstobeused1.pkl')
+SINGLE_RUN_YEARSTOCKS_LIVE_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stockstobeused1_for_live.pkl')
+SINGLE_RUN_RETURNS_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'returns.pkl')
+SINGLE_RUN_LIVE_RETURNS_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'returns_for_live.pkl')
 # Paths for bond data in single run
-SINGLE_RUN_BONDS_DATA_RAW_PKL = os.path.join(SINGLE_RUN_BONDS_DIR, 'bonds_data.pkl')
-SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL = os.path.join(SINGLE_RUN_BONDS_DIR, 'bonds_data_for_live.pkl')
-SINGLE_RUN_BONDS_DATA_ENRICHED_CSV = os.path.join(SINGLE_RUN_BONDS_DIR, 'dummy1_return_bonds.csv')
-SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV = os.path.join(SINGLE_RUN_BONDS_DIR, 'dummy1_return_bonds_for_live.csv')
+SINGLE_RUN_BONDS_DATA_RAW_PKL_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'bonds_data.pkl')
+SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'bonds_data_for_live.pkl')
+SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'dummy1_return_bonds.csv')
+SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'dummy1_return_bonds_for_live.csv')
 
 # Paths for stock data in single run
-SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV = os.path.join(SINGLE_RUN_STOCKS_DIR, 'dummy1_final.csv')
-SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV = os.path.join(SINGLE_RUN_STOCKS_DIR, 'dummy1_final_for_live.csv')
+SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(SINGLE_RUN_STOCKS_DIR_V, 'dummy1_final.csv')
+SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_V = os.path.join(SINGLE_RUN_STOCKS_DIR_V, 'dummy1_final_for_live.csv')
 
 # Paths for combined data in single run
-SINGLE_RUN_COMBINED_DATA_CSV = os.path.join(SINGLE_RUN_COMBINED_DIR, 'dummy1_return_bonds_stocks_forPicasso.csv')
-SINGLE_RUN_COMBINED_DATA_LIVE_CSV = os.path.join(SINGLE_RUN_COMBINED_DIR, 'dummy1_return_bonds_stocks_forPicasso_for_live.csv')
+SINGLE_RUN_COMBINED_DATA_CSV_V = os.path.join(SINGLE_RUN_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso.csv')
+SINGLE_RUN_COMBINED_DATA_LIVE_CSV_V = os.path.join(SINGLE_RUN_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso_for_live.csv')
 
 # Different rebalancing dates
 
 # Paths for returns and stock dicts and year stocks in bonds
-DIFF_REBALANCING_STOCK_DICT_PKL = os.path.join(DIFF_REBALANCING_DIR, 'stock_dict') # + str(number) + ".pkl" to be appended in file 
-DIFF_REBALANCING_STOCK_DICT_ALL_PKL = os.path.join(DIFF_REBALANCING_DIR, 'stock_dict.pkl')
+DIFF_REBALANCING_STOCK_DICT_PKL_V = os.path.join(DIFF_REBALANCING_DIR_V, 'stock_dict') # + str(number) + ".pkl" to be appended in file 
+DIFF_REBALANCING_STOCK_DICT_ALL_PKL_V = os.path.join(DIFF_REBALANCING_DIR_V, 'stock_dict.pkl')
 
-DIFF_REBALANCING_RETURNS_PKL = os.path.join(DIFF_REBALANCING_DIR, 'returns') # + str(number) + ".pkl" to be appended in file
-DIFF_REBALANCING_RETURNS_ALL_PKL = os.path.join(DIFF_REBALANCING_DIR, 'returns.pkl')
+DIFF_REBALANCING_RETURNS_PKL_V = os.path.join(DIFF_REBALANCING_DIR_V, 'returns') # + str(number) + ".pkl" to be appended in file
+DIFF_REBALANCING_RETURNS_ALL_PKL_V = os.path.join(DIFF_REBALANCING_DIR_V, 'returns.pkl')
 
 # Paths for combined data in different rebalancing dates
-DIFF_REBALANCING_COMBINED_DATA_CSV = os.path.join(DIFF_REBALANCING_COMBINED_DIR, 'dummy1_return_bonds_stocks_forPicasso') # + str(number) + ".csv" to be appended in file
-DIFF_REBALANCING_COMBINED_DATA_ALL_PKL = os.path.join(DIFF_REBALANCING_COMBINED_DIR, 'dummy1_return_bonds_stocks_forPicasso.pkl')
+DIFF_REBALANCING_COMBINED_DATA_CSV_V = os.path.join(DIFF_REBALANCING_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso') # + str(number) + ".csv" to be appended in file
+DIFF_REBALANCING_COMBINED_DATA_ALL_PKL_V = os.path.join(DIFF_REBALANCING_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso.pkl')
 
 # Paths for bond data in different rebalancing dates
-DIFF_REBALANCING_BONDS_DATA_RAW_PKL = os.path.join(DIFF_REBALANCING_BONDS_DIR, 'bonds_data.pkl')
-DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV = os.path.join(DIFF_REBALANCING_BONDS_DIR, 'dummy1_return_bonds') # + str(number) + ".csv" to be appended in file
+DIFF_REBALANCING_BONDS_DATA_RAW_PKL_V = os.path.join(DIFF_REBALANCING_BONDS_DIR_V, 'bonds_data.pkl')
+DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_V = os.path.join(DIFF_REBALANCING_BONDS_DIR_V, 'dummy1_return_bonds') # + str(number) + ".csv" to be appended in file
 
 # Paths for stock data in different rebalancing dates
-DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV = os.path.join(DIFF_REBALANCING_STOCKS_DIR, 'dummy1_final') # + str(number) + ".csv" to be appended in file
+DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(DIFF_REBALANCING_STOCKS_DIR_V, 'dummy1_final') # + str(number) + ".csv" to be appended in file
 
 
 # Paths for sensitivity analysis
-SENSITIVITY_BONDS_DATA_ENRICHED_CSV = os.path.join(SENSITIVITY_BONDS_DIR, 'dummy1_return_bonds.csv')
-SENSITIVITY_BONDS_DATA_RAW_PKL = os.path.join(SENSITIVITY_BONDS_DIR, 'bonds_data.pkl')
+SENSITIVITY_BONDS_DATA_ENRICHED_CSV_V = os.path.join(SENSITIVITY_BONDS_DIR_V, 'dummy1_return_bonds.csv')
+SENSITIVITY_BONDS_DATA_RAW_PKL_V = os.path.join(SENSITIVITY_BONDS_DIR_V, 'bonds_data.pkl')
 
-SENSITIVITY_STOCKS_DATA_ENRICHED_CSV = os.path.join(SENSITIVITY_STOCKS_DIR, 'dummy1_final.csv')
-SENSITIVITY_COMBINED_DATA_CSV = os.path.join(SENSITIVITY_COMBINED_DIR, 'dummy1_return_bonds_stocks_forPicasso.csv')
+SENSITIVITY_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(SENSITIVITY_STOCKS_DIR_V, 'dummy1_final.csv')
+SENSITIVITY_COMBINED_DATA_CSV_V = os.path.join(SENSITIVITY_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso.csv')
 
 # Paths for grid search
-GS_ITS=os.path.join(GS_DIR, 'its.pkl')
-GS_RES=os.path.join(GS_DIR,'gs_df.csv')
+GS_ITS_V=os.path.join(GS_DIR_V, 'its.pkl')
+GS_RES_V=os.path.join(GS_DIR_V,'gs_df.csv')
 
-GS_BONDS_DATA_ENRICHED_CSV = os.path.join(GS_BONDS_DIR, 'dummy1_return_bonds.csv')
-GS_BONDS_DATA_RAW_PKL = os.path.join(GS_BONDS_DIR, 'bonds_data.pkl')
-GS_STOCKS_DATA_ENRICHED_CSV = os.path.join(GS_STOCKS_DIR, 'dummy1_final.csv')
+GS_BONDS_DATA_ENRICHED_CSV_V = os.path.join(GS_BONDS_DIR_V, 'dummy1_return_bonds.csv')
+GS_BONDS_DATA_RAW_PKL_V = os.path.join(GS_BONDS_DIR_V, 'bonds_data.pkl')
+GS_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(GS_STOCKS_DIR_V, 'dummy1_final.csv')
 
 
 DV_QUANTILE_THRESHOLD_MAKE_YS=[0.05, 0.2, 0.33, 0.5, 0.66, 0.75, 0.9]
@@ -213,18 +176,20 @@ SENS_PARAMETER_CONFIG = {
 }
 
 # Exclusions and thresholds
-TICKERS_TO_EXCLUDE = BOND_TICKERS
-DV_QUANTILE_THRESHOLD = 0.75
-LEN_YEARS_DV_LOOKBACK = 2
+DV_QUANTILE_THRESHOLD_V = 0.33
 
 # Momentum and half-life settings
-MOMENTUM_WINDOWS = [30, 63, 90, 126, 150, 200, 252, 504]
-HALF_LIVES = [30, 63, 90, 126, 150, 200, 250]
+MOMENTUM_WINDOWS_V = [252] #30, 63, 90, 126, 150, 200, 252, 504
+HALF_LIVES_V = [150] #30, 42, 63, 90, 126, 150, 200, 250
+MULT_V = [1.01] #1.01, 1.5, 2.0, 4.0, 6.0
+WEIGHT_V = [0.9] #0.1, 0.5, 0.9
 
 # Selection criteria
-SELECTED_TOP_VOL_STOCKS = 75
-SELECTED_MOM_WINDOW = 252
-SELECTED_HALF_LIFE_WINDOW = 250
-SELECTED_N_STOCK_POSITIVE = 30
-SELECTED_N_STOCK_CHOSE = 8
-EXP_WEIGHT = 0.7
+SELECTED_TOP_VOL_STOCKS_V = 25
+SELECTED_MOM_WINDOW_V = 252
+SELECTED_HALF_LIFE_WINDOW_V = 150
+SELECTED_N_STOCK_POSITIVE_V = 15
+SELECTED_N_STOCK_CHOSE_V = 10
+EXP_WEIGHT_V = 0.7
+SELECTED_MULT_V = 1.01
+SELECTED_WEIGHT_V = 0.9
