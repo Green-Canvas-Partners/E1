@@ -8,7 +8,7 @@ project_root = os.path.dirname(os.path.abspath(__file__))  # Current file direct
 project_root = os.path.join(project_root, '..')  # Move one level up to the root
 sys.path.append(project_root)
 
-from definitions.constants import DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV, DIFF_REBALANCING_COMBINED_DATA_CSV, DIFF_REBALANCING_STOCK_DICT_PKL, EXP_WEIGHT, DIFF_REBALANCING_RETURNS_PKL,  SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, SELECTED_N_STOCK_CHOSE, DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV
+from definitions.constants import DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV, DIFF_REBALANCING_COMBINED_DATA_CSV, DIFF_REBALANCING_STOCK_DICT_PKL, EXP_WEIGHT, DIFF_REBALANCING_RETURNS_PKL,  SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, SELECTED_N_STOCK_CHOSE, DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV, SELECTED_N_STOCK_POSITIVE
 from utils.custom import calculate_returns, calculate_stock_selection, exponential_weights, load_and_preprocess_data
 
 import pickle
@@ -47,7 +47,7 @@ def main(number):
     ].sort_values('Date').reset_index(drop=True)
 
     # Step 3: Calculate stock selection based on momentum metrics
-    stock_dict = calculate_stock_selection(df = df)
+    stock_dict = calculate_stock_selection(df = df, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE)
 
     stock_dict_filename=DIFF_REBALANCING_STOCK_DICT_PKL + str(number) + ".pkl"
     with open(stock_dict_filename, 'wb') as file:

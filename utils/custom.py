@@ -198,20 +198,23 @@ def vol(*, dat, half_life, mult, weight):
     Returns:
         float: Calculated vol value.
     """
-    num = len(dat)
-    vol_42 = resid_vol(dat, half_life, num)
-    vol_63 = resid_vol(dat, half_life*mult, num)
+    try:
+        num = len(dat)
+        vol_42 = resid_vol(dat, half_life, num)
+        vol_63 = resid_vol(dat, half_life*mult, num)
 
-    vol_42_p = vol_42[vol_42>0]
-    vol_63_p = vol_63[vol_63>0]
+        vol_42_p = vol_42[vol_42>0]
+        vol_63_p = vol_63[vol_63>0]
 
-    vol_42_n = vol_42[vol_42<0]
-    vol_63_n = vol_63[vol_63<0]
+        vol_42_n = vol_42[vol_42<0]
+        vol_63_n = vol_63[vol_63<0]
 
-    sigma1 = ((np.std(vol_42_p))-(np.std(vol_42_n)))
-    sigma2 = ((np.std(vol_63_p))-(np.std(vol_63_n)))
-    score = weight * sigma1 + (1-weight) * sigma2  #resiid --> calculate score
-    return score
+        sigma1 = ((np.std(vol_42_p))-(np.std(vol_42_n)))
+        sigma2 = ((np.std(vol_63_p))-(np.std(vol_63_n)))
+        score = weight * sigma1 + (1-weight) * sigma2  #resiid --> calculate score
+        return score
+    except:
+        return -1000
 
 def calculate_monthly_vol(*, df, close_col_name, open_col_name, close_col_name_shift, open_col_name_shift, window, half_life, mult, weight, number=0):
     """

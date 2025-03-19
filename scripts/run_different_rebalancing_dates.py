@@ -39,11 +39,15 @@ def run_scripts(files_to_run: str):
 
 # Specify the full or relative paths of the files you want to run
 files_to_run = """
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/different_rebalancing_dates/makeBondsData.py
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/different_rebalancing_dates/makeStocksData.py
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/different_rebalancing_dates/combineStocksAndBondsForBacktest.py
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/different_rebalancing_dates/saveDiffRebalDatesStksAndRets.py
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/different_rebalancing_dates/withPicassoDaily.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates/makeBondsData.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates/makeStocksData.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates/combineStocksAndBondsForBacktest.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates/saveDiffRebalDatesStksAndRets.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates_V/makeBondsData.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates_V/makeStocksData.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates_V/combineStocksAndBondsForBacktest.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates_V/saveDiffRebalDatesStksAndRets.py
+/home/iyad/V1_DIR/V1/different_rebalancing_dates/withPicassoDaily.py
 """
 
 # Run the specified scripts
