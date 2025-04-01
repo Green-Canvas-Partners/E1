@@ -70,7 +70,7 @@ ROOT_DIR = '/home/iyad/V1_DIR'
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
 
 # Paths for raw stock data
-STOCKS_DATA_RAW_PKL = '/mnt/spare8tb/all_dataframes_fasih_2203.pkl '#'/mnt/spare8tb/all_dataframes_sequential.pkl'
+STOCKS_DATA_RAW_PKL = '/mnt/spare8tb/all_dataframes_fasih_2203.pkl'#'/mnt/spare8tb/all_dataframes_sequential.pkl'
 STOCKS_DATA_RAW_LIVE_PKL = '/mnt/spare8tb/all_dataframes_sequential_for_live.pkl'
 
 # single run dirs
