@@ -2,7 +2,20 @@ import pandas as pd
 import pickle
 import sys
 import os
+# from grid_search_V.makeGSDatas import process_single_dataframe_V_remote
 from joblib import Parallel, delayed
+import time
+import ray
+from definitions.constants_V import USE_RAY
+
+if USE_RAY:
+    # Define the runtime environment
+    runtime_env = {
+        "working_dir": "/home/iyad/V1_DIR/V1"
+    }
+
+    # Initialize Ray with the runtime environment
+    ray.init(_redis_password='password', runtime_env=runtime_env)
 
 # Append the project root to sys.path
 project_root = os.path.dirname(os.path.abspath(__file__))  # Current file directory
@@ -22,6 +35,12 @@ from utils.custom import (
     add_shift_columns_to_all, process_single_dataframe_V, 
     stock_selector, makeFinalDf, makeCorrectedDf
 )
+
+if USE_RAY:
+    # Wrap the function with Ray's remote decorator
+    @ray.remote
+    def process_single_dataframe_V_remote(*args, **kwargs):
+        return process_single_dataframe_V(*args, **kwargs)
 
 if FOR_LIVE:
     # Step 1: Load raw stock data from pickle file
@@ -73,11 +92,20 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
         if df.columns[0].split('_')[0] in selected_stocks
     ]
     
-    # Step 5: Process each filtered DataFrame in parallel
-    parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight)
-        for df in filtered_data
-    )
+    if USE_RAY:
+        remote_functions = [
+            process_single_dataframe_V_remote.remote(df=df.copy(), momentum_windows=momentum_windows, half_lives=half_lives, mult=mult, weight=weight)
+            for df in filtered_data
+        ]
+        # Fetch results from Ray
+        parallel_results = ray.get(remote_functions)
+
+    else:
+        # Step 5: Process each filtered DataFrame in parallel
+        parallel_results = Parallel(n_jobs=N_JOBS)(
+            delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight)
+            for df in filtered_data
+        )
 
     # Step 6: Combine all processed DataFrames into a final DataFrame
     final_df = makeFinalDf(parallel_results = parallel_results)
@@ -101,6 +129,7 @@ if __name__ == "__main__":
     This script processes stock data by applying momentum and exponential weighting
     calculations, correcting the final data, and saving it to a CSV file.
     """
+    start_time = time.time()  # Start timing
     main(
         MOMENTUM_WINDOWS_V, 
         HALF_LIVES_V, 
@@ -110,3 +139,9 @@ if __name__ == "__main__":
         combined_stocks,
         year
     )
+
+    end_time = time.time()  # End timing
+    elapsed_time = end_time - start_time  # Calculate elapsed time
+    print(f"Script execution time: {elapsed_time:.2f} seconds")
+    if USE_RAY:
+        ray.shutdown()

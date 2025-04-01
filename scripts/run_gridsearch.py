@@ -39,11 +39,14 @@ def run_scripts(files_to_run: str):
 
 # Specify the full or relative paths of the files you want to run
 files_to_run = """
-# /home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/sensitivity_analysis/makeYearStocksPickles.py
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/grid_search/makeBondsData.py
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/grid_search/makeGSDatas.py
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/grid_search/makeGsIters.py
-/home/iyad/M1_SKELETON_DIR/ID_M1_SKELETON/grid_search/gridsearch.py
+# /home/iyad/V1_DIR/V1/sensitivity_analysis/makeYearStocksPickles.py
+# /home/iyad/V1_DIR/V1/grid_search/makeBondsData.py
+# /home/iyad/V1_DIR/V1/grid_search/makeGSDatas.py
+# /home/iyad/V1_DIR/V1/sensitivity_analysis_V/makeYearStocksPickles.py
+# /home/iyad/V1_DIR/V1/grid_search_V/makeBondsData.py
+# /home/iyad/V1_DIR/V1/grid_search_V/makeGSDatas.py
+# /home/iyad/V1_DIR/V1/grid_search_V/makeGsIters.py
+/home/iyad/V1_DIR/V1/grid_search_V/gridsearch.py
 """
 
 # Run the specified scripts

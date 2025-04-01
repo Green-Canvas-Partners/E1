@@ -5,6 +5,39 @@ import os
 N_JOBS = 28
 FOR_LIVE=False
 
+USE_RAY = False
+
+"""
+If USE_RAY is True, Make sure of the following (assuming 2202 head node):
+
+sudo scp -r -P 2204 /home/iyad/V1_DIR iyad@ws01.zapto.org:/home/iyad/ || and the same for 2203, in order to ensure the data is present on each node
+
+____
+
+In head node currently 2202:
+
+env: M1_SKELETON_ENV_RAY 
+
+To start: ray start --head --port=6318 --redis-password='password' --num-cpus=28
+
+To check status: ray status
+
+To stop: ray stop --force
+
+____
+
+In worker node 2204:
+
+env: M1_SKELETON_ENV_RAY 
+
+To start: ray start --address='10.0.0.110:6318' --redis-password='password' --num-cpus=28
+
+To check status: ray status
+
+To stop: ray stop --force
+"""
+
+
 # Date range for analysis, last year of this range would be one less than the YEARSTOCKS below
 YEARS = range(2004, 2025)#2004
 
@@ -37,7 +70,7 @@ ROOT_DIR = '/home/iyad/V1_DIR'
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
 
 # Paths for raw stock data
-STOCKS_DATA_RAW_PKL = '/mnt/spare8tb/all_dataframes_sequential.pkl'#'/mnt/spare8tb/all_dataframes_sequential.pkl'
+STOCKS_DATA_RAW_PKL = '/mnt/spare8tb/all_dataframes_fasih_2203.pkl '#'/mnt/spare8tb/all_dataframes_sequential.pkl'
 STOCKS_DATA_RAW_LIVE_PKL = '/mnt/spare8tb/all_dataframes_sequential_for_live.pkl'
 
 # single run dirs
@@ -139,8 +172,8 @@ GS_BONDS_DATA_RAW_PKL = os.path.join(GS_BONDS_DIR, 'bonds_data.pkl')
 GS_STOCKS_DATA_ENRICHED_CSV = os.path.join(GS_STOCKS_DIR, 'dummy1_final.csv')
 
 
-DV_QUANTILE_THRESHOLD_MAKE_YS=[0.05, 0.2, 0.33, 0.5, 0.66, 0.75, 0.9]
-SELECTED_TOP_VOL_STOCKS_MAKE_YS=[11]#, 20, 27, 35, 40, 50, 75, 100, 125, 150, 200
+DV_QUANTILE_THRESHOLD_MAKE_YS=[0.05, 0.2, 0.5, 0.66, 0.75]
+SELECTED_TOP_VOL_STOCKS_MAKE_YS=[11, 20, 27, 75, 150]#, 20, 27, 35, 40, 50, 75, 100, 125, 150, 200
 
 # GS
 DATE_GS_CUTOFF='2018-01-01'
@@ -222,7 +255,7 @@ MOMENTUM_WINDOWS = [126] #30, 63, 90, 126, 150, 200, 252, 504
 HALF_LIVES = [42] #30, 42, 63, 90, 126, 150, 200, 250
 
 # Selection criteria
-SELECTED_TOP_VOL_STOCKS = 13
+SELECTED_TOP_VOL_STOCKS = 7
 SELECTED_MOM_WINDOW = 126
 SELECTED_HALF_LIFE_WINDOW = 42
 SELECTED_N_STOCK_POSITIVE = 1

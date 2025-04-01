@@ -47,7 +47,7 @@ files_to_run = """
 /home/iyad/V1_DIR/V1/different_rebalancing_dates_V/makeStocksData.py
 /home/iyad/V1_DIR/V1/different_rebalancing_dates_V/combineStocksAndBondsForBacktest.py
 /home/iyad/V1_DIR/V1/different_rebalancing_dates_V/saveDiffRebalDatesStksAndRets.py
-/home/iyad/V1_DIR/V1/different_rebalancing_dates/withPicassoDaily.py
+# /home/iyad/V1_DIR/V1/different_rebalancing_dates/withPicassoDaily.py
 """
 
 # Run the specified scripts
