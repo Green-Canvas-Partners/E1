@@ -6,16 +6,6 @@ import os
 from joblib import Parallel, delayed
 import time
 import ray
-from definitions.constants_V import USE_RAY
-
-if USE_RAY:
-    # Define the runtime environment
-    runtime_env = {
-        "working_dir": "/home/iyad/V1_DIR/V1"
-    }
-
-    # Initialize Ray with the runtime environment
-    ray.init(_redis_password='password', runtime_env=runtime_env)
 
 # Append the project root to sys.path
 project_root = os.path.dirname(os.path.abspath(__file__))  # Current file directory
@@ -23,7 +13,7 @@ project_root = os.path.join(project_root, '..')  # Move one level up to the root
 sys.path.append(project_root)
 
 # Import constants and custom utility functions
-from definitions.constants import BOND_TICKERS, FOR_LIVE, LEN_YEARS_DV_LOOKBACK, N_JOBS, STOCKS_DATA_RAW_LIVE_PKL, STOCKS_DATA_RAW_PKL, YEARS, YEARSTOCKS
+from definitions.constants import BOND_TICKERS, FOR_LIVE, LEN_YEARS_DV_LOOKBACK, N_JOBS, STOCKS_DATA_RAW_LIVE_PKL, STOCKS_DATA_RAW_PKL, YEARS, YEARSTOCKS, USE_RAY
 
 from definitions.constants_V import (
     MOMENTUM_WINDOWS_V, HALF_LIVES_V, DV_QUANTILE_THRESHOLD_V, SELECTED_TOP_VOL_STOCKS_V, 
@@ -35,6 +25,15 @@ from utils.custom import (
     add_shift_columns_to_all, process_single_dataframe_V, 
     stock_selector, makeFinalDf, makeCorrectedDf
 )
+
+if USE_RAY:
+    # Define the runtime environment
+    runtime_env = {
+        "working_dir": "/home/iyad/V1_DIR/V1"
+    }
+
+    # Initialize Ray with the runtime environment
+    ray.init(_redis_password='password', runtime_env=runtime_env)
 
 if USE_RAY:
     # Wrap the function with Ray's remote decorator

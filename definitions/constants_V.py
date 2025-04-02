@@ -103,7 +103,7 @@ GS_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(GS_STOCKS_DIR_V, 'dummy1_final.csv'
 
 
 DV_QUANTILE_THRESHOLD_MAKE_YS_V=[0.05, 0.2, 0.33, 0.5, 0.66, 0.75, 0.9]
-SELECTED_TOP_VOL_STOCKS_MAKE_YS_V=[11, 20, 30, 40, 50, 75, 100, 150, 200]
+SELECTED_TOP_VOL_STOCKS_MAKE_YS_V=[11, 13, 20, 27, 35, 40, 50, 75, 100, 125, 150, 200]#
 
 # GS
 DATE_GS_CUTOFF='2018-01-01'
@@ -117,15 +117,17 @@ WEIGHT_GS_V=[0.9]#
 
 #  SENS
 DATES_SENS=[DATE_GS_CUTOFF, '2025-01-01']
-DV_QUANTILE_THRESHOLD_SENS=[0.05, 0.2, 0.33, 0.5, 0.66, 0.75, 0.9]#
-SELECTED_TOP_VOL_STOCKS_SENS=[11, 20, 27, 35, 40, 50, 75, 100, 125, 150, 200]#10,  
-MOMENTUM_WINDOWS_SENS=[[30], [63], [90], [126], [150], [200], [252], [504]]#
-HALF_LIVES_SENS=[[30], [63], [90], [126], [150], [200], [250]]#
-SELECTED_N_STOCK_POSITIVE_SENS=[7, 8, 9, 10, 11]#30, 37, 45, 50, 55, 60
-SELECTED_N_STOCK_CHOSE_SENS=[1, 2, 3, 4, 5, 6, 7, 8, 9]#, 13, 15, 20, 
-EXP_WEIGHT_SENS=[0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95, 0.9999999999]
+DV_QUANTILE_THRESHOLD_SENS_V=[0.05, 0.2]#, 0.33, 0.5, 0.66, 0.75, 0.9
+SELECTED_TOP_VOL_STOCKS_SENS_V=[11, 20]#, 27, 35, 40, 50, 75, 100, 125, 150, 200
+MOMENTUM_WINDOWS_SENS_V=[[30], [63]]#, [90], [126], [150], [200], [252], [504]
+HALF_LIVES_SENS_V=[[30], [63]]#, [90], [126], [150], [200], [250]
+SELECTED_N_STOCK_POSITIVE_SENS_V=[7, 8, 9, 10, 11]#30, 37, 45, 50, 55, 60
+SELECTED_N_STOCK_CHOSE_SENS_V=[1, 2, 3]#, 4, 5, 6, 7, 8, 9, 13, 15, 20, 
+EXP_WEIGHT_SENS_V=[0.5, 0.6, 0.7]#, 0.8, 0.85, 0.9, 0.95, 0.9999999999
+MULT_SENS_V=[[1.01], [1.5], [2.0]]#, 4.0, 6.0
+WEIGHT_SENS_V=[[0.1],[0.5], [0.9]]#
 
-SENS_PARAMETER_CONFIG = {
+SENS_PARAMETER_CONFIG_V = {
     'dvqt': {
         'anrets': ('Annual Returns', 'Annual Return', 'blue'),
         'sharpes': ('Sharpe Ratios', 'Sharpe Ratio', 'green'),
@@ -174,6 +176,20 @@ SENS_PARAMETER_CONFIG = {
         'maxdraws': ('Max Drawdowns (Half Life)', 'Max Drawdown', 'red'),
         'calmars': ('Calmar Ratios (Half Life)', 'Calmar Ratio', 'cyan'),
         'sortinos': ('Sortino Ratios (Half Life)', 'Sortino Ratio', 'magenta')
+    },
+    'mult': {
+        'anrets': ('Annual Returns (Multiplier)', 'Annual Return', 'blue'),
+        'sharpes': ('Sharpe Ratios (Multiplier)', 'Sharpe Ratio', 'green'),
+        'maxdraws': ('Max Drawdowns (Multiplier)', 'Max Drawdown', 'red'),
+        'calmars': ('Calmar Ratios (Multiplier)', 'Calmar Ratio', 'cyan'),
+        'sortinos': ('Sortino Ratios (Multiplier)', 'Sortino Ratio', 'magenta')
+    },
+    'weight': {
+        'anrets': ('Annual Returns (Weight)', 'Annual Return', 'blue'),
+        'sharpes': ('Sharpe Ratios (Weight)', 'Sharpe Ratio', 'green'),
+        'maxdraws': ('Max Drawdowns (Weight)', 'Max Drawdown', 'red'),
+        'calmars': ('Calmar Ratios (Weight)', 'Calmar Ratio', 'cyan'),
+        'sortinos': ('Sortino Ratios (Weight)', 'Sortino Ratio', 'magenta')
     }
 }
 

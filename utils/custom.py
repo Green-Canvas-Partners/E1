@@ -862,6 +862,42 @@ def process_data(*,
     final_df.to_csv(output_filename, index=False)
     print(f'Data processing complete. Results saved to: {output_filename}')
 
+def process_data_V(*, 
+    momentum_windows,
+    half_lives,
+    mult,
+    weight,
+    all_data,
+    selected_stocks,
+    output_filename,
+    is_stock_data = False,
+    stock_selection = None
+):
+    """Generic data processing function for both stocks and bonds."""
+    filtered_data = [
+        df for df in all_data
+        if df.columns[0].split('_')[0] in selected_stocks
+    ]
+
+    parallel_results = Parallel(n_jobs=N_JOBS)(
+        delayed(process_single_dataframe_V)(
+            df=df.copy(),
+            momentum_windows=momentum_windows,
+            half_lives=half_lives,
+            mult=mult,
+            weight=weight
+        )
+        for df in filtered_data
+    )
+
+    final_df = makeFinalDf(parallel_results=parallel_results)
+
+    if is_stock_data:
+        final_df = makeCorrectedDf(final_df=final_df, selected_stocks=stock_selection)
+
+    final_df.to_csv(output_filename, index=False)
+    print(f'Data processing complete. Results saved to: {output_filename}')
+
 
 def log_test_parameters(*, params, metrics, logger):
     """Log test parameters and results."""

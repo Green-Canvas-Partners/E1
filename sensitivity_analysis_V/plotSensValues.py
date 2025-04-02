@@ -8,7 +8,7 @@ from typing import Dict, List
 project_root = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.join(project_root, '..')
 sys.path.append(project_root)
-from definitions.constants import SENSITIVITY_DIR, SENS_PARAMETER_CONFIG
+from definitions.constants_V import SENSITIVITY_DIR_V, SENS_PARAMETER_CONFIG_V
 
 def load_pickle(file_path: str) -> Dict:
     with open(file_path, 'rb') as file:
@@ -23,8 +23,8 @@ def plot_group(parameter: str, metrics: Dict[str, tuple], output_path: str) -> N
         full_metric_name_tillGS = f"{metric_key}_{parameter}_tillGS"
         full_metric_name_full = f"{metric_key}_{parameter}_full"
         
-        data_tillGS = load_pickle(os.path.join(SENSITIVITY_DIR, f"{full_metric_name_tillGS}.pkl"))
-        data_full = load_pickle(os.path.join(SENSITIVITY_DIR, f"{full_metric_name_full}.pkl"))
+        data_tillGS = load_pickle(os.path.join(SENSITIVITY_DIR_V, f"{full_metric_name_tillGS}.pkl"))
+        data_full = load_pickle(os.path.join(SENSITIVITY_DIR_V, f"{full_metric_name_full}.pkl"))
         
         # Special handling for list-type parameters
         if parameter in ['mom_window', 'half_life']:
@@ -99,6 +99,6 @@ def plot_group(parameter: str, metrics: Dict[str, tuple], output_path: str) -> N
     print(f"Plot group saved to {output_path}")
 
 # Generate plots
-for parameter, metrics in SENS_PARAMETER_CONFIG.items():
+for parameter, metrics in SENS_PARAMETER_CONFIG_V.items():
     output_path = f"{parameter}_sensitivity_analysis.pdf"
     plot_group(parameter, metrics, output_path)
