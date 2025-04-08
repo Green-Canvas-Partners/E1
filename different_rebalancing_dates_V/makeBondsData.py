@@ -57,7 +57,7 @@ def main(momentum_windows, half_lives, mult, weight, years, all_data, selected_s
 
     # Step 5: Process each filtered DataFrame in parallel
     parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows=momentum_windows, half_lives = half_lives, mult=mult, weight=weight) 
+        delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows=momentum_windows, half_lives = half_lives, mult=mult, weight=weight, number = number) 
         for df in filtered_data
     )
 
