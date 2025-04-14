@@ -15,7 +15,6 @@ from definitions.constants import *
 
 
 
-
 """ Download EPS data from eodhd.com , Now here are problems the tickers names here 
 are not completely matching with the tickers names in the polygon api, we will deal that 
 for now we have include all the tickers name we have including meta in it."""
@@ -24,6 +23,7 @@ for now we have include all the tickers name we have including meta in it."""
 
 """Below are the all functions for downloading the financial data from eodhd.com, including
 Earnings data, Divident, shares outstanding."""
+
 def earning_data_downloader(tickers,api_key):
     
     stocks = tickers
@@ -64,7 +64,7 @@ def earning_data_downloader(tickers,api_key):
     return eps_data_dict
 
 
-def divident_data_downloader(tickers,api_key):
+def divident_data_downloader(tickers):
 
     dividend_data = {}
 
@@ -143,3 +143,48 @@ def shares_outstanding_data_downloader(tickers,api_key):
     return shares_data
 
 
+def update_data(file_path, df, output_file):
+    with open(file_path, 'rb') as file:
+        data = pickle.load(file)
+    
+    for _, row in df.iterrows():
+        alternative = row['Alternative/Status']
+        original = row['Original Ticker']
+        if original in data:
+            data[alternative] = data.pop(original)
+    
+    with open(output_file, 'wb') as file:
+        pickle.dump(data, file)
+
+def update_dividend_data(file_path, df, output_file):
+    with open(file_path, 'rb') as file:
+        data = pickle.load(file)
+    
+    for _, row in df.iterrows():
+        alternative = row['Alternative/Status']
+        original = row['Original Ticker']
+        if original in data:
+            data[alternative] = data.pop(original)
+    
+    # Specific changes for dividend data
+    data['FB'] = data.pop('META')
+    data['META'] = data['FB']
+    
+    with open(output_file, 'wb') as file:
+        pickle.dump(data, file)
+
+
+
+data = {
+    'Alternative/Status': [
+        "ABX", "AGU", "BBT", "BHI","BRCM", "BRK.A", "BRK.B", "CBS","CMCSK", "COG", "COH", "COV", "CREE", "ERTS", "ESV","HANS","KFT", "MYL","NYX", "PBR.A", "PCLN", "POT", "RDS.A", "RIMM", "SLW","TCK",
+        "TOT", "UTX", "VALE.P","WAG"],
+    "Original Ticker": [
+        "GOLD", "NTR", "TFC", "BKR","AVGO", "BRK-A", "BRK-B", "PARA","CMCSA", "CTRA", "TPR", "MDT", "WOLF", "EA", "VAL","MNST", "KHC","VTRS", "ICE", "PBR", "BKNG","NTR", "SHEL", "BB",
+        "WPM", "TECK", "TTE", "RTX", "VALE", "WBA"]}
+
+df = pd.DataFrame(data)
+
+update_data('shares_outstanding_data_250.pkl', df, 'updated_shares_outstanding_data_250.pkl')
+update_data('eps_data.pkl', df, 'updated_eps_data.pkl')
+update_dividend_data('dividend_dataAAAAA.pkl', df, 'updated_dividend_data.pkl')
