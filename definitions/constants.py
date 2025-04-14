@@ -3,7 +3,6 @@ import os
 
 # General configuration
 # for L1
-print("L1")
 N_JOBS = 28
 FOR_LIVE=False
 
