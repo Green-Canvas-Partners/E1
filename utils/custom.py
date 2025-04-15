@@ -827,7 +827,8 @@ def load_and_preprocess_data(*, file1, file2, FOR_LIVE=False):
         data1 = pd.read_csv(file1).dropna(axis=0)  # Drop rows with missing values
         data2 = pd.read_csv(file2).dropna(axis=0)
 
-    concatenated = pd.concat([data1, data2])  # Concatenate both DataFrames
+    concatenated = pd.concat([data2])  # Concatenate both DataFrames
+
     return concatenated
 
 
@@ -914,16 +915,15 @@ def calculate_stock_selection_L(*, df, df_M, SELECTED_MOM_WINDOW=252, SELECTED_H
     # dt = np.array(df[df.Stock == 'SPY'].Date)
     dt = df.Date.unique()
     stock_dict = {}
+    print('df', df)
 
     for i in dt:
         tmp = df[df.Date == i].copy()
         sorted_tmp = tmp.sort_values(f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}', ascending=False).drop_duplicates()
         positive_momentum_stocks = sorted_tmp[sorted_tmp[f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}'] > 0]
-        print('positive_momentum_stocks', positive_momentum_stocks)
         tmp_M = df_M[df_M.Date == i].copy()
         sorted_tmp_M = tmp_M.sort_values(f'Momentum_{SELECTED_MOM_WINDOW_M}_{SELECTED_HALF_LIFE_WINDOW_M}', ascending=False).drop_duplicates()
         positive_momentum_stocks_M = sorted_tmp_M[sorted_tmp_M[f'Momentum_{SELECTED_MOM_WINDOW_M}_{SELECTED_HALF_LIFE_WINDOW_M}'] > 0]
-        print('positive_momentum_stocks_M', positive_momentum_stocks_M)
         # Select top stocks with positive momentum
         stock_dict[i] = positive_momentum_stocks.head(SELECTED_N_STOCK_CHOSE).Stock.values if ((len(positive_momentum_stocks) >= SELECTED_N_STOCK_POSITIVE) and (len(positive_momentum_stocks_M) >= SELECTED_N_STOCK_POSITIVE_M)) else np.array([])
 
