@@ -59,6 +59,14 @@ SINGLE_RUN_YEARSTOCKS_LIVE_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stockstobeuse
 SINGLE_RUN_RETURNS_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'returns.pkl')
 SINGLE_RUN_LIVE_RETURNS_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'returns_for_live.pkl')
 # Paths for bond data in single run
+
+
+SINGLE_RUN_BONDS_DATA_RAW_PKL_L = os.path.join(SINGLE_RUN_BONDS_DIR_L, 'bonds_data.pkl')
+SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_L = os.path.join(SINGLE_RUN_BONDS_DIR_L, 'bonds_data_for_live.pkl')
+SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_L = os.path.join(SINGLE_RUN_BONDS_DIR_L, 'dummy1_return_bonds.csv')
+SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_L = os.path.join(SINGLE_RUN_BONDS_DIR_L, 'dummy1_return_bonds_for_live.csv')
+
+
 SINGLE_RUN_BONDS_DATA_RAW_PKL_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'bonds_data.pkl')
 SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'bonds_data_for_live.pkl')
 SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'dummy1_return_bonds.csv')

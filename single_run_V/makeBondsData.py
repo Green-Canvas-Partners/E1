@@ -12,8 +12,8 @@ sys.path.append(project_root)
 
 # Import constants and custom utility functions
 from definitions.constants_V import (
-    MOMENTUM_WINDOWS_V, HALF_LIVES_V, SINGLE_RUN_BONDS_DATA_RAW_PKL_V, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V, 
-    SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V, SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V, MULT_V, WEIGHT_V
+    MOMENTUM_WINDOWS_V, HALF_LIVES_V, SINGLE_RUN_BONDS_DATA_RAW_PKL_V, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_L, 
+    SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V, SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_L, MULT_V, WEIGHT_V
 )
 from definitions.constants import (
     BOND_TICKERS, START_DATE_DATA_DOWNLOAD, END_DATE_DATA_DOWNLOAD, YEARS, N_JOBS, FOR_LIVE, 
@@ -22,7 +22,7 @@ from definitions.constants import (
 
 from utils.custom import (
     download_data, add_shift_columns_to_all, 
-    process_single_dataframe_V, makeFinalDf
+    process_single_dataframe_L, makeFinalDf
 )
 
 if FOR_LIVE:
@@ -66,7 +66,7 @@ def main(momentum_windows, half_lives, mult, weight, years, all_data, selected_s
 
     # Step 5: Process each filtered DataFrame in parallel
     parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows=momentum_windows, half_lives = half_lives, mult=mult, weight=weight) 
+        delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows=momentum_windows, half_lives = half_lives, mult=mult, weight=weight) 
         for df in filtered_data
     )
 
@@ -75,9 +75,9 @@ def main(momentum_windows, half_lives, mult, weight, years, all_data, selected_s
 
     # Step 7: Save the final DataFrame to a CSV file
     if FOR_LIVE:
-        filename = SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V
+        filename = SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_L
     else:
-        filename = SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V
+        filename = SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_L
     final_df.to_csv(filename, index=False)
     print(f'Data processing complete. Results saved to: {filename}')
 
