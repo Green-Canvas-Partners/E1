@@ -3,7 +3,7 @@ import os
 
 # General configuration
 # for L1
-N_JOBS = 28
+N_JOBS = 30
 FOR_LIVE=False
 
 USE_RAY = False

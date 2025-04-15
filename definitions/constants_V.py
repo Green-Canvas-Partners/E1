@@ -2,14 +2,21 @@ from datetime import datetime, timedelta
 import os
 import pandas as pd
 # Root directories
-ROOT_DIR = '/home/iyad/V1_DIR'
-DATA_DIR_V = os.path.join(ROOT_DIR, 'data_V')
+ROOT_DIR = '/home/iyad/L1_DIR'
+ROOT_DIR_V = '/home/iyad/V1_DIR'
+DATA_DIR_V = os.path.join(ROOT_DIR_V, 'data_V')
+DATA_DIR_L = os.path.join(ROOT_DIR, 'data_L')
 
-# single run dirs
 SINGLE_RUN_DIR_V = os.path.join(DATA_DIR_V, 'single_run')
 SINGLE_RUN_BONDS_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'bonds')
 SINGLE_RUN_STOCKS_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'stocks')
 SINGLE_RUN_COMBINED_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'combined')
+
+SINGLE_RUN_DIR_L = os.path.join(DATA_DIR_L, 'single_run')
+SINGLE_RUN_BONDS_DIR_L = os.path.join(SINGLE_RUN_DIR_L, 'bonds')
+SINGLE_RUN_STOCKS_DIR_L = os.path.join(SINGLE_RUN_DIR_L, 'stocks')
+SINGLE_RUN_COMBINED_DIR_L = os.path.join(SINGLE_RUN_DIR_L, 'combined')
+
 
 # diff rebalancing dirs
 DIFF_REBALANCING_DIR_V = os.path.join(DATA_DIR_V, 'different_rebalancing_dates')
@@ -32,7 +39,7 @@ GS_COMBINED_DIR_V = os.path.join(GS_DIR_V, 'combined')
 
 # Create directories if they do not exist
 dirs_to_create = [
-    SINGLE_RUN_DIR_V, SINGLE_RUN_BONDS_DIR_V, SINGLE_RUN_STOCKS_DIR_V, SINGLE_RUN_COMBINED_DIR_V,
+    SINGLE_RUN_DIR_L, SINGLE_RUN_BONDS_DIR_L, SINGLE_RUN_STOCKS_DIR_L, SINGLE_RUN_COMBINED_DIR_L,
     DIFF_REBALANCING_DIR_V, DIFF_REBALANCING_BONDS_DIR_V, DIFF_REBALANCING_STOCKS_DIR_V, DIFF_REBALANCING_COMBINED_DIR_V, DIFF_REBALANCING_PICASSO_DIR_V,
     SENSITIVITY_DIR_V, SENSITIVITY_BONDS_DIR_V, SENSITIVITY_STOCKS_DIR_V, SENSITIVITY_COMBINED_DIR_V,
     GS_DIR_V, GS_BONDS_DIR_V, GS_STOCKS_DIR_V, GS_COMBINED_DIR_V
@@ -60,6 +67,9 @@ SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V = os.path.join(SINGLE_RUN_BONDS_DIR_V,
 # Paths for stock data in single run
 SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(SINGLE_RUN_STOCKS_DIR_V, 'dummy1_final.csv')
 SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_V = os.path.join(SINGLE_RUN_STOCKS_DIR_V, 'dummy1_final_for_live.csv')
+
+SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_L = os.path.join(SINGLE_RUN_STOCKS_DIR_L, 'dummy1_final.csv')
+SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L = os.path.join(SINGLE_RUN_STOCKS_DIR_L, 'dummy1_final_for_live.csv')
 
 # Paths for combined data in single run
 SINGLE_RUN_COMBINED_DATA_CSV_V = os.path.join(SINGLE_RUN_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso.csv')
@@ -194,11 +204,11 @@ SENS_PARAMETER_CONFIG_V = {
 }
 
 # Exclusions and thresholds
-DV_QUANTILE_THRESHOLD_V = 0.05
+DV_QUANTILE_THRESHOLD_V = 0.75
 
 # Momentum and half-life settings
-MOMENTUM_WINDOWS_V = [30, 90] #30, 63, 90, 126, 150, 200, 252, 504
-HALF_LIVES_V = [30, 126] #30, 42, 63, 90, 126, 150, 200, 250
+MOMENTUM_WINDOWS_V = [60, 90] #30, 63, 90, 126, 150, 200, 252, 504
+HALF_LIVES_V = [60] #30, 42, 63, 90, 126, 150, 200, 250
 # MULT_V = [1.01, 1.5, 2.0, 4.0] #1.01, 1.5, 2.0, 4.0, 6.0
 # WEIGHT_V = [0.1, 0.5, 0.9] #0.1, 0.5, 0.9
 MULT_V = [1.01] #1.01, 1.5, 2.0, 4.0, 6.0
@@ -232,3 +242,10 @@ DATA_L1_TICKERS_REFINED= {
         "WPM", "TECK", "TTE", "RTX", "VALE", "WBA"]}
 
 DATA_L1_TICKERS_REFINED = pd.DataFrame(DATA_L1_TICKERS_REFINED)
+
+etfs_to_exclude = [
+    'DIA', 'EEM', 'FAS', 'GDX', 'IWM', 'OIH', 'QQQ', 'QQQQ', 'QID', 'QLD', 
+    'SDS', 'SKF', 'SMH', 'SNDK', 'SPY', 'SQQQ', 'SRS', 'SSO', 'TNA', 'TQQQ', 
+    'TZA', 'VOO', 'VWO', 'VXX', 'XIV', 'XLE', 'XLF', 'XLI', 'XLK', 'XLU', 
+    'XLV', 'XOM', 'BRCM', 'PCLN', 'MER', 'POT'
+]

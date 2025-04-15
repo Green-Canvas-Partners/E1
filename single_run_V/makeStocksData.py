@@ -17,19 +17,19 @@ from definitions.constants import BOND_TICKERS, FOR_LIVE, LEN_YEARS_DV_LOOKBACK,
 
 from definitions.constants_V import (
     MOMENTUM_WINDOWS_V, HALF_LIVES_V, DV_QUANTILE_THRESHOLD_V, SELECTED_TOP_VOL_STOCKS_V, 
-    SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_V, SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_V, 
-    SINGLE_RUN_YEARSTOCKS_LIVE_PKL_V, SINGLE_RUN_YEARSTOCKS_PKL_V, MULT_V, WEIGHT_V,
+    SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_L, SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L, 
+    SINGLE_RUN_YEARSTOCKS_LIVE_PKL_V, SINGLE_RUN_YEARSTOCKS_PKL_V, MULT_V, WEIGHT_V,etfs_to_exclude
 )
 
 from utils.custom import (
-    add_shift_columns_to_all, process_single_dataframe_V, 
+    add_shift_columns_to_all, process_single_dataframe_L, 
     stock_selector, makeFinalDf, makeCorrectedDf
 )
 
 if USE_RAY:
     # Define the runtime environment
     runtime_env = {
-        "working_dir": "/home/iyad/V1_DIR/V1"
+        "working_dir": "/home/iyad/L1_DIR/L1"
     }
 
     # Initialize Ray with the runtime environment
@@ -39,7 +39,7 @@ if USE_RAY:
     # Wrap the function with Ray's remote decorator
     @ray.remote
     def process_single_dataframe_V_remote(*args, **kwargs):
-        return process_single_dataframe_V(*args, **kwargs)
+        return process_single_dataframe_L(*args, **kwargs)
 
 if FOR_LIVE:
     # Step 1: Load raw stock data from pickle file
@@ -64,8 +64,10 @@ year = stock_selector(
     YEARSTOCKS_PATH_LIVE=SINGLE_RUN_YEARSTOCKS_LIVE_PKL_V,
     YEARSTOCKS_PATH=SINGLE_RUN_YEARSTOCKS_PKL_V
 )
+
 stock_lists = year.values()
 combined_stocks = list(set(stock for sublist in stock_lists for stock in sublist))
+combined_stocks = [stock for stock in combined_stocks if stock not in etfs_to_exclude]
 
 # Step 3: Add shift columns to the loaded stock data
 all_data = add_shift_columns_to_all(all_data = all_data)
@@ -102,7 +104,7 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
     else:
         # Step 5: Process each filtered DataFrame in parallel
         parallel_results = Parallel(n_jobs=N_JOBS)(
-            delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight)
+            delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight)
             for df in filtered_data
         )
 
@@ -114,11 +116,11 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
 
     # Step 8: Save the corrected DataFrame to a CSV file
     if FOR_LIVE:
-        corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_V, index=False)
-        print(f'Data processing complete. Results saved to: {SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_V}')
+        corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L, index=False)
+        print(f'Data processing complete. Results saved to: {SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L}')
     else:
-        corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_V, index=False)
-        print(f'Data processing complete. Results saved to: {SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_V}')
+        corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_L, index=False)
+        print(f'Data processing complete. Results saved to: {SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_L}')
 
 # Execute the main function
 if __name__ == "__main__":
@@ -138,7 +140,6 @@ if __name__ == "__main__":
         combined_stocks,
         year
     )
-
     end_time = time.time()  # End timing
     elapsed_time = end_time - start_time  # Calculate elapsed time
     print(f"Script execution time: {elapsed_time:.2f} seconds")

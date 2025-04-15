@@ -225,9 +225,121 @@ def add_shift_columns_to_all(*, all_data):
         for prefix in prefixes:
             if f"{prefix}_Open" in df.columns and f"{prefix}_Close" in df.columns:
                 df.sort_index(inplace=True)
+                df[f"{prefix}_Volume_shift"] = df[f"{prefix}_Volume"].shift(-1)
                 df[f"{prefix}_Close_shift"] = df[f"{prefix}_Close"].shift(-1)
                 df[f"{prefix}_Open_shift"] = df[f"{prefix}_Open"].shift(-1)
     return all_data
+
+def turnovern(window_data, index,ticker):
+    
+    with open('/home/iyad/aliquidity/V1/updated_shares_outstanding_data_250.pkl', 'rb') as f:
+        shares_data = pickle.load(f)
+    ticker = ticker
+    if ticker in shares_data:
+        shar = shares_data[ticker]
+        shar['Shares Outstanding'] = shar['Shares Outstanding'].astype(str).str[:-4].astype(int)
+
+#         print(f"Shares Outstanding Data for {ticker}:")
+#         print(df)
+    else:
+#         print(f"Shares Outstanding Data for {ticker} not found!")
+        return 0  # Or any default value you want to return
+     
+    filtered_da = pd.DataFrame(window_data)
+    filtered_da.reset_index(inplace=True)
+    
+    filtered_da['Date'] = pd.to_datetime(filtered_da['Date'])
+    shar['period'] = pd.to_datetime(shar['Date'])
+    
+    shar = shar.sort_values('Date')
+    
+    daily_dates = pd.date_range(start=shar['Date'].min(), end=shar['Date'].max(), freq='D')
+    daily_df = pd.DataFrame(daily_dates, columns=['Date'])
+    # Merge and forward fill the 'Shares Outstanding' values
+    daily_df = pd.merge(daily_df, shar, on='Date', how='left')
+    daily_df['Shares Outstanding'] = daily_df['Shares Outstanding'].fillna(method='ffill')
+    combined_df = pd.merge(daily_df,filtered_da,on='Date')
+    combined_df
+
+    num = len(window_data)
+    if num == 0:
+        # If the window data is empty, return 0
+        return 0
+    else:
+        Volume = window_data
+        arr = []
+        
+        for i in np.arange(num-1):
+            # Ensure you are handling the case when no matching 'Date' is found
+            turnov_row = combined_df[combined_df['Date'] == str(window_data.index[i].date())]
+            
+            if not turnov_row.empty:
+                turnov = turnov_row['Shares Outstanding'].values[0]
+            else:
+                # Handle the case where no match is found
+                print(f"No sharesOutstanding data found for date: {window_data.index[i].date()}")
+                turnov = 0 # Default value to avoid division by zero
+
+            # Proceed only if turnov is not zero
+            if turnov != 0:
+                val = Volume[i] / turnov
+                arr = np.append(arr, val)
+            else:
+#                 print(f"Warning: sharesOutstanding is zero for date: {window_data.index[i].date()}")
+                turnov = 0
+
+        # Check if the sum of arr is greater than zero before applying math.log
+        if sum(arr) > 0:
+            result = math.log(sum(arr))
+        else:
+            result = 0  # Avoid log of zero or negative numbers
+            
+        return result
+
+    
+def turnovern3M(window_data3m, index,ticker):
+    
+#     print('turnover22')
+    num_days_in_month = 30  # Approximate trading days in a month
+    num_months = 3  # We are dealing with 3 months of data
+    monthly_turnovers = []
+
+    # Loop through each month and calculate turnover
+    for month in range(num_months-1):
+        start = month * num_days_in_month #0,30
+        end = (month + 1) * num_days_in_month # 30,60
+        val = math.exp(turnovern(window_data3m[start:end], index,ticker))  # Get turnover for each month
+        monthly_turnovers.append(val)
+
+    # Calculate the average turnover for the 3 months and return the logarithmic value
+    result = math.log(sum(monthly_turnovers) / num_months)
+    return result
+
+def turnovern12M(window_data12m, index,ticker):
+    print(3)
+    num_days_in_month = 21  # Approximate number of trading days in a month
+    num_months = 12  # We're working with 12 months of data
+    monthly_turnovers = []
+
+    # Loop through each month and calculate turnover
+    for month in range(num_months):
+        start = month * num_days_in_month
+        end = (month + 1) * num_days_in_month
+        # Extract the relevant window for the month and calculate turnover
+        value = turnovern(window_data12m[start:end], index,ticker)
+        monthly_turnovers.append(value)
+
+    total_turnover = sum(monthly_turnovers)
+
+    # Return 0 if the total turnover is zero or less to avoid math domain errors
+    if total_turnover <= 0:
+        print(f"Total turnover is zero or negative: {total_turnover}. Returning 0.")
+        return 0  # Return 0 if total turnover is zero or negative
+
+    # Calculate the average turnover for the 12 months and return the logarithmic value
+    result = math.log(total_turnover / num_months)
+    return result
+
 
 
 def momentum(*, point, half_life):
@@ -247,6 +359,15 @@ def momentum(*, point, half_life):
         val = (math.log(inter + 1)) * math.exp(-4 + i / half_life)
         arr2.append(val)
     return sum(arr2)
+
+
+def momentum_liquidity(window_data,window_data3m,window_data12m, index,ticker):
+    a = turnovern(window_data, index,ticker)
+    b = turnovern3M(window_data3m, index,ticker)
+    c = turnovern12M(window_data12m, index,ticker)
+    val = 0.35 * a + 0.35 * b + 0.3 * c
+    return val
+
 
 
 def calculate_monthly_momentum(*, df, close_col_name, open_col_name, close_col_name_shift, open_col_name_shift, window, half_life, number=0):
@@ -287,6 +408,50 @@ def calculate_monthly_momentum(*, df, close_col_name, open_col_name, close_col_n
             tail -= 1
 
     return pd.DataFrame(momentum_values, columns=['Date', f'Momentum_{window}_{half_life}', 'Close', 'Open', 'Close_shift', 'Open_shift'])
+
+
+def calculate_monthly_liquidity(df, close_col_name,open_col_name,close_col_name_shift,open_col_name_shift,Volume_col_name,volume_col_name_shift, window, half_life,ticker):
+    """
+    Calculate monthly liquidity for a given DataFrame.
+
+    Args:
+        df (pd.DataFrame): Stock data DataFrame.
+
+"""
+
+    tail = len(df)
+    momentum_values = []
+    index = 0
+    window3m = window+60
+    window12m = window+330
+
+    while tail - window > 0:
+        last_date = df.iloc[tail - 1].name
+        last_close = df[Volume_col_name].iloc[tail - 1]
+        last_open = df[open_col_name].iloc[tail - 1]
+        last_close_shift = df[volume_col_name_shift].iloc[tail - 1]
+        last_open_shift = df[open_col_name_shift].iloc[tail - 1]
+#         print('last_date',last_date)
+#         print('tail,window',tail,window)
+        window_data = df[Volume_col_name].iloc[tail - window: tail]
+        window_data3m = df[close_col_name].iloc[tail - window3m: tail]
+        window_data12m = df[close_col_name].iloc[tail - window12m: tail]
+
+#         print('df', df)
+#         print('window_data',window_data)
+        mom_value = momentum_liquidity(window_data,window_data3m,window_data12m, index,ticker)
+#         print('mom_value',mom_value)
+        momentum_values.append((last_date, mom_value,last_close,last_open,last_close_shift,last_open_shift))
+#         print('momentum_values',momentum_values)
+        tail -= 1
+        current_month = df.iloc[tail].name.month
+#         print(momentum_values)
+        while df.iloc[tail - 1].name.month == current_month:
+            tail -= 1
+
+    return pd.DataFrame(momentum_values, columns=['Date', f'Momentum_{window}_{half_life}','Close','Open','Close_shift','Open_shift'])
+
+
 
 
 def process_single_dataframe(*, df, momentum_windows, half_lives, number=0):
@@ -447,6 +612,53 @@ def process_single_dataframe_V(*, df, momentum_windows, half_lives, mult, weight
     combined_df['Stock'] = ticker
     combined_df.sort_index(inplace=True)
     return combined_df
+
+def process_single_dataframe_L(*, df, momentum_windows, half_lives, mult, weight, number=0):
+    """
+    Process a single DataFrame to calculate momentum metrics.
+
+    Args:
+        df (pd.DataFrame): Stock data DataFrame.
+        momentum_windows (list): List of momentum windows to use.
+        half_lives (list): List of half-lives to use.
+
+    Returns:
+        pd.DataFrame: DataFrame with combined momentum metrics.
+    """
+
+    ticker = [col.split('_')[0] for col in df.columns if '_Close' in col][0]
+    close_col_name = f"{ticker}_Close"
+    open_col_name = f"{ticker}_Open"
+    Volume_col_name = f"{ticker}_Volume"
+    
+    close_col_name_shift = f"{ticker}_Close_shift"
+    open_col_name_shift = f"{ticker}_Open_shift"
+    volume_col_name_shift = f"{ticker}_Volume_shift"
+    
+    momentum_dfs = []
+    counter = 0
+    for window in momentum_windows:
+        for half_life in half_lives:
+            if counter ==0:
+                momentum_df = calculate_monthly_liquidity(df, close_col_name,open_col_name,close_col_name_shift,
+                                                       open_col_name_shift,Volume_col_name,volume_col_name_shift, window, half_life,ticker)
+                momentum_df.set_index('Date', inplace=True)
+                momentum_dfs.append(momentum_df)
+            else:
+                momentum_df = calculate_monthly_liquidity(df, close_col_name,open_col_name,close_col_name_shift,
+                                                       open_col_name_shift,Volume_col_name,volume_col_name_shift, window, half_life,ticker)
+                momentum_df.set_index('Date', inplace=True)
+                momentum_dfs.append(momentum_df[[f'Momentum_{window}_{half_life}']])
+            counter = counter+1
+                
+                
+                
+    combined_df = pd.concat(momentum_dfs, axis=1)
+    combined_df['Stock'] = ticker
+    combined_df.sort_index(inplace=True)
+    return combined_df
+
+
 
 
 def paralelizer(*, data, year, BOND_TICKERS, LEN_YEARS_DV_LOOKBACK, DV_QUANTILE_THRESHOLD):
