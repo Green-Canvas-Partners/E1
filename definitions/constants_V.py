@@ -51,6 +51,14 @@ for directory in dirs_to_create:
 
 # single run
 # Paths for returns and stock dicts and year stocks in single run
+SINGLE_RUN_LIVE_STOCK_DICT_PKL_L = os.path.join(SINGLE_RUN_DIR_L, 'stock_dict_for_live.pkl')
+SINGLE_RUN_STOCK_DICT_PKL_L = os.path.join(SINGLE_RUN_DIR_L, 'stock_dict.pkl')
+SINGLE_RUN_YEARSTOCKS_PKL_L = os.path.join(SINGLE_RUN_DIR_L, 'stockstobeused1.pkl')
+SINGLE_RUN_YEARSTOCKS_LIVE_PKL_L = os.path.join(SINGLE_RUN_DIR_L, 'stockstobeused1_for_live.pkl')
+SINGLE_RUN_RETURNS_PKL_L = os.path.join(SINGLE_RUN_DIR_L, 'returns.pkl')
+SINGLE_RUN_LIVE_RETURNS_PKL_L = os.path.join(SINGLE_RUN_DIR_L, 'returns_for_live.pkl')
+
+
 SINGLE_RUN_LIVE_STOCK_DICT_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stock_dict_for_live.pkl')
 SINGLE_RUN_STOCK_DICT_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stock_dict.pkl')
 
@@ -80,6 +88,9 @@ SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_L = os.path.join(SINGLE_RUN_STOCKS_DIR_L, 'd
 SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L = os.path.join(SINGLE_RUN_STOCKS_DIR_L, 'dummy1_final_for_live.csv')
 
 # Paths for combined data in single run
+SINGLE_RUN_COMBINED_DATA_CSV_L = os.path.join(SINGLE_RUN_COMBINED_DIR_L, 'dummy1_return_bonds_stocks_forPicasso.csv')
+SINGLE_RUN_COMBINED_DATA_LIVE_CSV_L = os.path.join(SINGLE_RUN_COMBINED_DIR_L, 'dummy1_return_bonds_stocks_forPicasso_for_live.csv')
+
 SINGLE_RUN_COMBINED_DATA_CSV_V = os.path.join(SINGLE_RUN_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso.csv')
 SINGLE_RUN_COMBINED_DATA_LIVE_CSV_V = os.path.join(SINGLE_RUN_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso_for_live.csv')
 
@@ -223,11 +234,11 @@ MULT_V = [1.01] #1.01, 1.5, 2.0, 4.0, 6.0
 WEIGHT_V = [0.9] #0.1, 0.5, 0.9
 
 # Selection criteria
-SELECTED_TOP_VOL_STOCKS_V = 13
-SELECTED_MOM_WINDOW_V = 90
-SELECTED_HALF_LIFE_WINDOW_V = 126
-SELECTED_N_STOCK_POSITIVE_V = 11
-SELECTED_N_STOCK_CHOSE_V = 3
+SELECTED_TOP_VOL_STOCKS_V = 0
+SELECTED_MOM_WINDOW_V = 60
+SELECTED_HALF_LIFE_WINDOW_V = 60
+SELECTED_N_STOCK_POSITIVE_V = 0
+SELECTED_N_STOCK_CHOSE_V = 1
 EXP_WEIGHT_V = 0.5
 SELECTED_MULT_V = 1.01
 SELECTED_WEIGHT_V = 0.9

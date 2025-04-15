@@ -897,6 +897,39 @@ def calculate_stock_selection(*, df, SELECTED_MOM_WINDOW=252, SELECTED_HALF_LIFE
 
     return stock_dict
 
+def calculate_stock_selection_L(*, df, df_M, SELECTED_MOM_WINDOW=252, SELECTED_HALF_LIFE_WINDOW=252, SELECTED_MULT=1.01, SELECTED_WEIGHT=0.9, SELECTED_N_STOCK_POSITIVE=3, SELECTED_N_STOCK_CHOSE=1, SELECTED_MOM_WINDOW_M=252, SELECTED_HALF_LIFE_WINDOW_M=252, SELECTED_N_STOCK_POSITIVE_M=3):
+    """
+    Select stocks based on their momentum values.
+
+    Args:
+        df (pd.DataFrame): DataFrame with stock data and momentum metrics.
+        SELECTED_MOM_WINDOW (int): Selected momentum window.
+        SELECTED_HALF_LIFE_WINDOW (int): Selected half-life window.
+        SELECTED_N_STOCK_POSITIVE (int): Minimum number of stocks with positive momentum.
+        SELECTED_N_STOCK_CHOSE (int): Number of top stocks to select.
+
+    Returns:
+        dict: Dictionary with dates as keys and selected stocks as values.
+    """
+    # dt = np.array(df[df.Stock == 'SPY'].Date)
+    dt = df.Date.unique()
+    stock_dict = {}
+
+    for i in dt:
+        tmp = df[df.Date == i].copy()
+        sorted_tmp = tmp.sort_values(f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}', ascending=False).drop_duplicates()
+        positive_momentum_stocks = sorted_tmp[sorted_tmp[f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}'] > 0]
+        print('positive_momentum_stocks', positive_momentum_stocks)
+        tmp_M = df_M[df_M.Date == i].copy()
+        sorted_tmp_M = tmp_M.sort_values(f'Momentum_{SELECTED_MOM_WINDOW_M}_{SELECTED_HALF_LIFE_WINDOW_M}', ascending=False).drop_duplicates()
+        positive_momentum_stocks_M = sorted_tmp_M[sorted_tmp_M[f'Momentum_{SELECTED_MOM_WINDOW_M}_{SELECTED_HALF_LIFE_WINDOW_M}'] > 0]
+        print('positive_momentum_stocks_M', positive_momentum_stocks_M)
+        # Select top stocks with positive momentum
+        stock_dict[i] = positive_momentum_stocks.head(SELECTED_N_STOCK_CHOSE).Stock.values if ((len(positive_momentum_stocks) >= SELECTED_N_STOCK_POSITIVE) and (len(positive_momentum_stocks_M) >= SELECTED_N_STOCK_POSITIVE_M)) else np.array([])
+
+    return stock_dict
+
+
 def calculate_stock_selection_V(*, df, df_M, SELECTED_MOM_WINDOW=252, SELECTED_HALF_LIFE_WINDOW=252, SELECTED_MULT=1.01, SELECTED_WEIGHT=0.9, SELECTED_N_STOCK_POSITIVE=3, SELECTED_N_STOCK_CHOSE=1, SELECTED_MOM_WINDOW_M=252, SELECTED_HALF_LIFE_WINDOW_M=252, SELECTED_N_STOCK_POSITIVE_M=3):
     """
     Select stocks based on their momentum values.
@@ -955,6 +988,34 @@ def calculate_returns(*, stock_dict, df, weights, mom, half):
             returns[date] = tmp['w_rets'].sum()
 
     return pd.Series(returns) * 100
+
+def calculate_returns_L(*, stock_dict, df, weights, mom, half):
+    """
+    Calculate portfolio returns based on selected stocks and weights.
+
+    Args:
+        stock_dict (dict): Dictionary with dates as keys and selected stocks as values.
+        df (pd.DataFrame): DataFrame containing stock data.
+        weights (list): List of weights for the selected stocks.
+
+    Returns:
+        pd.Series: Series of portfolio returns.
+    """
+    returns = {}
+    for date, stocks in stock_dict.items():
+        tmp = df[df.Date == date].copy()
+        tmp = tmp[tmp['Stock'].isin(stocks)]
+        tmp = tmp.sort_values(by=f'Momentum_{mom}_{half}', ascending=True)
+
+        if len(tmp) == 0:
+            returns[date] = 0
+        else:
+            tmp['weights'] = weights
+            tmp['w_rets'] = tmp['weights'] * tmp['Returns']
+            returns[date] = tmp['w_rets'].sum()
+
+    return pd.Series(returns) * 100
+
 
 def calculate_returns_V(*, stock_dict, df, weights, mom, half, mult, w):
     """
