@@ -11,8 +11,8 @@ project_root = os.path.join(project_root, '..')  # Move one level up to the root
 sys.path.append(project_root)
 
 
-from definitions.constants_V import *
-from utils.custom import *
+from definitions.constants_V import DATA_L1_TICKERS_REFINED, L1_TICKERS, API_KEY_EODHD
+from utils.custom import update_data, update_dividend_data, earning_data_downloader, divident_data_downloader, shares_outstanding_data_downloader
 
 
 """ Download EPS data from eodhd.com , Now here are problems the tickers names here 
@@ -24,9 +24,9 @@ for now we have include all the tickers name we have including meta in it."""
 """Below are the all functions for downloading the financial data from eodhd.com, including
 Earnings data, Divident, shares outstanding."""
 
-# earning_data_downloader(L1_TICKERS,API_KEY_EODHD)
-# divident_data_downloader(L1_TICKERS)
-# shares_outstanding_data_downloader(L1_TICKERS,API_KEY_EODHD)
+earning_data_downloader(L1_TICKERS,API_KEY_EODHD)
+divident_data_downloader(L1_TICKERS)
+shares_outstanding_data_downloader(L1_TICKERS,API_KEY_EODHD)
 
 
 df = DATA_L1_TICKERS_REFINED
