@@ -12,8 +12,8 @@ sys.path.append(project_root)
 
 # Import constants and custom utility functions
 from definitions.constants_V import (
-    MOMENTUM_WINDOWS_V, HALF_LIVES_V, SINGLE_RUN_BONDS_DATA_RAW_PKL_V, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_L, 
-    SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V, SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_L, MULT_V, WEIGHT_V
+    MOMENTUM_WINDOWS_V, HALF_LIVES_V, SINGLE_RUN_BONDS_DATA_RAW_PKL_L, SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_L, 
+    SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_L, SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_L, MULT_V, WEIGHT_V
 )
 from definitions.constants import (
     BOND_TICKERS, START_DATE_DATA_DOWNLOAD, END_DATE_DATA_DOWNLOAD, YEARS, N_JOBS, FOR_LIVE, 
@@ -27,17 +27,17 @@ from utils.custom import (
 
 if FOR_LIVE:
     # Step 1: Download bond data for specified tickers and date range
-    download_data(tickers=BOND_TICKERS, start_date=START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE, end_date=END_DATE_FOR_LIVE, bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V)
+    download_data(tickers=BOND_TICKERS, start_date=START_DATE_GET_TICKERS_AND_DATA_DOWNLOAD_FOR_LIVE, end_date=END_DATE_FOR_LIVE, bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_L)
 else:
     # Step 1: Download bond data for specified tickers and date range
-    download_data(tickers=BOND_TICKERS, start_date=START_DATE_DATA_DOWNLOAD, end_date=(pd.to_datetime(END_DATE_DATA_DOWNLOAD) + timedelta(days=1)).strftime('%Y-%m-%d'), bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_PKL_V)
+    download_data(tickers=BOND_TICKERS, start_date=START_DATE_DATA_DOWNLOAD, end_date=(pd.to_datetime(END_DATE_DATA_DOWNLOAD) + timedelta(days=1)).strftime('%Y-%m-%d'), bonds_data_path_raw=SINGLE_RUN_BONDS_DATA_RAW_PKL_L)
 
 if FOR_LIVE:
-    with open(SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V, 'rb') as f:
+    with open(SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_L, 'rb') as f:
         all_data_bonds = pickle.load(f)
 else:
     # Step 2: Load the raw bond data from a pickle file
-    with open(SINGLE_RUN_BONDS_DATA_RAW_PKL_V, 'rb') as f:
+    with open(SINGLE_RUN_BONDS_DATA_RAW_PKL_L, 'rb') as f:
         all_data_bonds = pickle.load(f)
 
 # Step 3: Add shift columns to the loaded bond data
