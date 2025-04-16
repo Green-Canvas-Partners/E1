@@ -3,14 +3,9 @@ import os
 import pandas as pd
 # Root directories
 ROOT_DIR = '/home/iyad/L1_DIR'
-ROOT_DIR_V = '/home/iyad/V1_DIR'
-DATA_DIR_V = os.path.join(ROOT_DIR_V, 'data_V')
+
 DATA_DIR_L = os.path.join(ROOT_DIR, 'data_L')
 
-SINGLE_RUN_DIR_V = os.path.join(DATA_DIR_V, 'single_run')
-SINGLE_RUN_BONDS_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'bonds')
-SINGLE_RUN_STOCKS_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'stocks')
-SINGLE_RUN_COMBINED_DIR_V = os.path.join(SINGLE_RUN_DIR_V, 'combined')
 
 SINGLE_RUN_DIR_L = os.path.join(DATA_DIR_L, 'single_run')
 SINGLE_RUN_BONDS_DIR_L = os.path.join(SINGLE_RUN_DIR_L, 'bonds')
@@ -19,30 +14,30 @@ SINGLE_RUN_COMBINED_DIR_L = os.path.join(SINGLE_RUN_DIR_L, 'combined')
 
 
 # diff rebalancing dirs
-DIFF_REBALANCING_DIR_V = os.path.join(DATA_DIR_V, 'different_rebalancing_dates')
-DIFF_REBALANCING_BONDS_DIR_V = os.path.join(DIFF_REBALANCING_DIR_V, 'bonds')
-DIFF_REBALANCING_STOCKS_DIR_V = os.path.join(DIFF_REBALANCING_DIR_V, 'stocks')
-DIFF_REBALANCING_COMBINED_DIR_V = os.path.join(DIFF_REBALANCING_DIR_V, 'combined')
-DIFF_REBALANCING_PICASSO_DIR_V = os.path.join(DIFF_REBALANCING_DIR_V, 'picasso')
+DIFF_REBALANCING_DIR_L = os.path.join(DATA_DIR_L, 'different_rebalancing_dates')
+DIFF_REBALANCING_BONDS_DIR_L = os.path.join(DIFF_REBALANCING_DIR_L, 'bonds')
+DIFF_REBALANCING_STOCKS_DIR_L = os.path.join(DIFF_REBALANCING_DIR_L, 'stocks')
+DIFF_REBALANCING_COMBINED_DIR_L = os.path.join(DIFF_REBALANCING_DIR_L, 'combined')
+DIFF_REBALANCING_PICASSO_DIR_L = os.path.join(DIFF_REBALANCING_DIR_L, 'picasso')
 
 # sensitivity dirs
-SENSITIVITY_DIR_V = os.path.join(DATA_DIR_V, 'sensitivity_analysis')
-SENSITIVITY_BONDS_DIR_V = os.path.join(SENSITIVITY_DIR_V, 'bonds')
-SENSITIVITY_STOCKS_DIR_V = os.path.join(SENSITIVITY_DIR_V, 'stocks')
-SENSITIVITY_COMBINED_DIR_V = os.path.join(SENSITIVITY_DIR_V, 'combined')
+SENSITIVITY_DIR_L = os.path.join(DATA_DIR_L, 'sensitivity_analysis')
+SENSITIVITY_BONDS_DIR_L = os.path.join(SENSITIVITY_DIR_L, 'bonds')
+SENSITIVITY_STOCKS_DIR_L = os.path.join(SENSITIVITY_DIR_L, 'stocks')
+SENSITIVITY_COMBINED_DIR_L = os.path.join(SENSITIVITY_DIR_L, 'combined')
 
 # GS dirs
-GS_DIR_V = os.path.join(DATA_DIR_V, 'grid_search')
-GS_BONDS_DIR_V = os.path.join(GS_DIR_V, 'bonds')
-GS_STOCKS_DIR_V = os.path.join(GS_DIR_V, 'stocks')
-GS_COMBINED_DIR_V = os.path.join(GS_DIR_V, 'combined')
+GS_DIR_L = os.path.join(DATA_DIR_L, 'grid_search')
+GS_BONDS_DIR_L = os.path.join(GS_DIR_L, 'bonds')
+GS_STOCKS_DIR_L = os.path.join(GS_DIR_L, 'stocks')
+GS_COMBINED_DIR_L = os.path.join(GS_DIR_L, 'combined')
 
 # Create directories if they do not exist
 dirs_to_create = [
     SINGLE_RUN_DIR_L, SINGLE_RUN_BONDS_DIR_L, SINGLE_RUN_STOCKS_DIR_L, SINGLE_RUN_COMBINED_DIR_L,
-    DIFF_REBALANCING_DIR_V, DIFF_REBALANCING_BONDS_DIR_V, DIFF_REBALANCING_STOCKS_DIR_V, DIFF_REBALANCING_COMBINED_DIR_V, DIFF_REBALANCING_PICASSO_DIR_V,
-    SENSITIVITY_DIR_V, SENSITIVITY_BONDS_DIR_V, SENSITIVITY_STOCKS_DIR_V, SENSITIVITY_COMBINED_DIR_V,
-    GS_DIR_V, GS_BONDS_DIR_V, GS_STOCKS_DIR_V, GS_COMBINED_DIR_V
+    DIFF_REBALANCING_DIR_L, DIFF_REBALANCING_BONDS_DIR_L, DIFF_REBALANCING_STOCKS_DIR_L, DIFF_REBALANCING_COMBINED_DIR_L, DIFF_REBALANCING_PICASSO_DIR_L,
+    SENSITIVITY_DIR_L, SENSITIVITY_BONDS_DIR_L, SENSITIVITY_STOCKS_DIR_L, SENSITIVITY_COMBINED_DIR_L,
+    GS_DIR_L, GS_BONDS_DIR_L, GS_STOCKS_DIR_L, GS_COMBINED_DIR_L
 ]
 
 for directory in dirs_to_create:
@@ -59,31 +54,13 @@ SINGLE_RUN_RETURNS_PKL_L = os.path.join(SINGLE_RUN_DIR_L, 'returns.pkl')
 SINGLE_RUN_LIVE_RETURNS_PKL_L = os.path.join(SINGLE_RUN_DIR_L, 'returns_for_live.pkl')
 
 
-SINGLE_RUN_LIVE_STOCK_DICT_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stock_dict_for_live.pkl')
-SINGLE_RUN_STOCK_DICT_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stock_dict.pkl')
-
-SINGLE_RUN_YEARSTOCKS_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stockstobeused1.pkl')
-SINGLE_RUN_YEARSTOCKS_LIVE_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'stockstobeused1_for_live.pkl')
-SINGLE_RUN_RETURNS_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'returns.pkl')
-SINGLE_RUN_LIVE_RETURNS_PKL_V = os.path.join(SINGLE_RUN_DIR_V, 'returns_for_live.pkl')
 # Paths for bond data in single run
-
-
 SINGLE_RUN_BONDS_DATA_RAW_PKL_L = os.path.join(SINGLE_RUN_BONDS_DIR_L, 'bonds_data.pkl')
 SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_L = os.path.join(SINGLE_RUN_BONDS_DIR_L, 'bonds_data_for_live.pkl')
 SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_L = os.path.join(SINGLE_RUN_BONDS_DIR_L, 'dummy1_return_bonds.csv')
 SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_L = os.path.join(SINGLE_RUN_BONDS_DIR_L, 'dummy1_return_bonds_for_live.csv')
 
-
-SINGLE_RUN_BONDS_DATA_RAW_PKL_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'bonds_data.pkl')
-SINGLE_RUN_BONDS_DATA_RAW_LIVE_PKL_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'bonds_data_for_live.pkl')
-SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'dummy1_return_bonds.csv')
-SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_V = os.path.join(SINGLE_RUN_BONDS_DIR_V, 'dummy1_return_bonds_for_live.csv')
-
 # Paths for stock data in single run
-SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(SINGLE_RUN_STOCKS_DIR_V, 'dummy1_final.csv')
-SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_V = os.path.join(SINGLE_RUN_STOCKS_DIR_V, 'dummy1_final_for_live.csv')
-
 SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_L = os.path.join(SINGLE_RUN_STOCKS_DIR_L, 'dummy1_final.csv')
 SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L = os.path.join(SINGLE_RUN_STOCKS_DIR_L, 'dummy1_final_for_live.csv')
 
@@ -91,44 +68,41 @@ SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L = os.path.join(SINGLE_RUN_STOCKS_DIR_
 SINGLE_RUN_COMBINED_DATA_CSV_L = os.path.join(SINGLE_RUN_COMBINED_DIR_L, 'dummy1_return_bonds_stocks_forPicasso.csv')
 SINGLE_RUN_COMBINED_DATA_LIVE_CSV_L = os.path.join(SINGLE_RUN_COMBINED_DIR_L, 'dummy1_return_bonds_stocks_forPicasso_for_live.csv')
 
-SINGLE_RUN_COMBINED_DATA_CSV_V = os.path.join(SINGLE_RUN_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso.csv')
-SINGLE_RUN_COMBINED_DATA_LIVE_CSV_V = os.path.join(SINGLE_RUN_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso_for_live.csv')
-
 # Different rebalancing dates
 
 # Paths for returns and stock dicts and year stocks in bonds
-DIFF_REBALANCING_STOCK_DICT_PKL_V = os.path.join(DIFF_REBALANCING_DIR_V, 'stock_dict') # + str(number) + ".pkl" to be appended in file 
-DIFF_REBALANCING_STOCK_DICT_ALL_PKL_V = os.path.join(DIFF_REBALANCING_DIR_V, 'stock_dict.pkl')
+DIFF_REBALANCING_STOCK_DICT_PKL_L = os.path.join(DIFF_REBALANCING_DIR_L, 'stock_dict') # + str(number) + ".pkl" to be appended in file 
+DIFF_REBALANCING_STOCK_DICT_ALL_PKL_L = os.path.join(DIFF_REBALANCING_DIR_L, 'stock_dict.pkl')
 
-DIFF_REBALANCING_RETURNS_PKL_V = os.path.join(DIFF_REBALANCING_DIR_V, 'returns') # + str(number) + ".pkl" to be appended in file
-DIFF_REBALANCING_RETURNS_ALL_PKL_V = os.path.join(DIFF_REBALANCING_DIR_V, 'returns.pkl')
+DIFF_REBALANCING_RETURNS_PKL_L = os.path.join(DIFF_REBALANCING_DIR_L, 'returns') # + str(number) + ".pkl" to be appended in file
+DIFF_REBALANCING_RETURNS_ALL_PKL_L = os.path.join(DIFF_REBALANCING_DIR_L, 'returns.pkl')
 
 # Paths for combined data in different rebalancing dates
-DIFF_REBALANCING_COMBINED_DATA_CSV_V = os.path.join(DIFF_REBALANCING_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso') # + str(number) + ".csv" to be appended in file
-DIFF_REBALANCING_COMBINED_DATA_ALL_PKL_V = os.path.join(DIFF_REBALANCING_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso.pkl')
+DIFF_REBALANCING_COMBINED_DATA_CSV_L = os.path.join(DIFF_REBALANCING_COMBINED_DIR_L, 'dummy1_return_bonds_stocks_forPicasso') # + str(number) + ".csv" to be appended in file
+DIFF_REBALANCING_COMBINED_DATA_ALL_PKL_L = os.path.join(DIFF_REBALANCING_COMBINED_DIR_L, 'dummy1_return_bonds_stocks_forPicasso.pkl')
 
 # Paths for bond data in different rebalancing dates
-DIFF_REBALANCING_BONDS_DATA_RAW_PKL_V = os.path.join(DIFF_REBALANCING_BONDS_DIR_V, 'bonds_data.pkl')
-DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_V = os.path.join(DIFF_REBALANCING_BONDS_DIR_V, 'dummy1_return_bonds') # + str(number) + ".csv" to be appended in file
+DIFF_REBALANCING_BONDS_DATA_RAW_PKL_L = os.path.join(DIFF_REBALANCING_BONDS_DIR_L, 'bonds_data.pkl')
+DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_L = os.path.join(DIFF_REBALANCING_BONDS_DIR_L, 'dummy1_return_bonds') # + str(number) + ".csv" to be appended in file
 
 # Paths for stock data in different rebalancing dates
-DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(DIFF_REBALANCING_STOCKS_DIR_V, 'dummy1_final') # + str(number) + ".csv" to be appended in file
+DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_L = os.path.join(DIFF_REBALANCING_STOCKS_DIR_L, 'dummy1_final') # + str(number) + ".csv" to be appended in file
 
 
 # Paths for sensitivity analysis
-SENSITIVITY_BONDS_DATA_ENRICHED_CSV_V = os.path.join(SENSITIVITY_BONDS_DIR_V, 'dummy1_return_bonds.csv')
-SENSITIVITY_BONDS_DATA_RAW_PKL_V = os.path.join(SENSITIVITY_BONDS_DIR_V, 'bonds_data.pkl')
+SENSITIVITY_BONDS_DATA_ENRICHED_CSV_L = os.path.join(SENSITIVITY_BONDS_DIR_L, 'dummy1_return_bonds.csv')
+SENSITIVITY_BONDS_DATA_RAW_PKL_L = os.path.join(SENSITIVITY_BONDS_DIR_L, 'bonds_data.pkl')
 
-SENSITIVITY_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(SENSITIVITY_STOCKS_DIR_V, 'dummy1_final.csv')
-SENSITIVITY_COMBINED_DATA_CSV_V = os.path.join(SENSITIVITY_COMBINED_DIR_V, 'dummy1_return_bonds_stocks_forPicasso.csv')
+SENSITIVITY_STOCKS_DATA_ENRICHED_CSV_L = os.path.join(SENSITIVITY_STOCKS_DIR_L, 'dummy1_final.csv')
+SENSITIVITY_COMBINED_DATA_CSV_L = os.path.join(SENSITIVITY_COMBINED_DIR_L, 'dummy1_return_bonds_stocks_forPicasso.csv')
 
 # Paths for grid search
-GS_ITS_V=os.path.join(GS_DIR_V, 'its.pkl')
-GS_RES_V=os.path.join(GS_DIR_V,'gs_df')
+GS_ITS_L=os.path.join(GS_DIR_L, 'its.pkl')
+GS_RES_L=os.path.join(GS_DIR_L,'gs_df')
 
-GS_BONDS_DATA_ENRICHED_CSV_V = os.path.join(GS_BONDS_DIR_V, 'dummy1_return_bonds.csv')
-GS_BONDS_DATA_RAW_PKL_V = os.path.join(GS_BONDS_DIR_V, 'bonds_data.pkl')
-GS_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(GS_STOCKS_DIR_V, 'dummy1_final.csv')
+GS_BONDS_DATA_ENRICHED_CSV_L = os.path.join(GS_BONDS_DIR_L, 'dummy1_return_bonds.csv')
+GS_BONDS_DATA_RAW_PKL_L = os.path.join(GS_BONDS_DIR_L, 'bonds_data.pkl')
+GS_STOCKS_DATA_ENRICHED_CSV_L = os.path.join(GS_STOCKS_DIR_L, 'dummy1_final.csv')
 
 
 SHARE_OUTSTANDING_DATA_250_TESTING_PKL_L = os.path.join(DATA_DIR_L, 'shares_outstanding_data_250_testing.pkl')
