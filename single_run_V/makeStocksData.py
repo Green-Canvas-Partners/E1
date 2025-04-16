@@ -108,14 +108,10 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
             delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight)
             for df in filtered_data
         )
-    print(len(parallel_results))
     # Step 6: Combine all processed DataFrames into a final DataFrame
-    print("here2")
     final_df = makeFinalDf(parallel_results = parallel_results)
-    print(final_df.head())
     # Step 7: Correct the final DataFrame to ensure it matches specified criteria
     corrected_stocks_df = makeCorrectedDf(final_df = final_df, selected_stocks = stockstobeused, FOR_LIVE=FOR_LIVE)
-    print(corrected_stocks_df.head())
     # Step 8: Save the corrected DataFrame to a CSV file
     if FOR_LIVE:
         corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L, index=False)

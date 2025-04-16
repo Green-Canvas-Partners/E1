@@ -11,7 +11,7 @@ project_root = os.path.join(project_root, '..')  # Move one level up to the root
 sys.path.append(project_root)
 
 
-from definitions.constants_V import DATA_L1_TICKERS_REFINED, L1_TICKERS, API_KEY_EODHD
+from definitions.constants_V import DATA_L1_TICKERS_REFINED, L1_TICKERS, API_KEY_EODHD, SHARE_OUTSTANDING_DATA_250_TESTING_PKL_L, SHARES_OUTSTANDING_DATA_250_UPDATED_PKL_L, EPS_DATA_TESTING_PKL_L, EPS_DATA_UPDATED_PKL_L, DIVIDEND_DATA_TESTING_PKL_L, DIVIDEND_DATA_UPDATED_PKL_L
 from utils.custom import update_data, update_dividend_data, earning_data_downloader, divident_data_downloader, shares_outstanding_data_downloader
 
 
@@ -31,6 +31,6 @@ shares_outstanding_data_downloader(L1_TICKERS,API_KEY_EODHD)
 
 df = DATA_L1_TICKERS_REFINED
 # print('y')
-update_data('shares_outstanding_data_250_testing.pkl', df, 'updated_shares_outstanding_data_250.pkl')
-update_data('eps_data_testing.pkl', df, 'updated_eps_data.pkl')
-update_dividend_data('dividend_dataAAAAA.pkl', df, 'updated_dividend_data.pkl')
+update_data(SHARE_OUTSTANDING_DATA_250_TESTING_PKL_L, df, SHARES_OUTSTANDING_DATA_250_UPDATED_PKL_L)
+update_data(EPS_DATA_TESTING_PKL_L, df, EPS_DATA_UPDATED_PKL_L)
+update_dividend_data(DIVIDEND_DATA_TESTING_PKL_L, df, DIVIDEND_DATA_UPDATED_PKL_L)

@@ -1,6 +1,7 @@
 from datetime import timedelta
 import pandas as pd
 from definitions.constants import BOND_TICKERS, END_DATE_DATA_DOWNLOAD, START_DATE_DATA_DOWNLOAD
+from definitions.constants_V import SHARE_OUTSTANDING_DATA_250_TESTING_PKL_L, SHARES_OUTSTANDING_DATA_250_UPDATED_PKL_L, EPS_DATA_TESTING_PKL_L, EPS_DATA_UPDATED_PKL_L, DIVIDEND_DATA_TESTING_PKL_L, DIVIDEND_DATA_UPDATED_PKL_L
 import yfinance as yf
 import math
 import pickle
@@ -92,7 +93,7 @@ def earning_data_downloader(tickers,api_key):
         except Exception as e:
             print(f"Failed to fetch data for {stock}: {e}")
         
-    with open('eps_data_testing.pkl', 'wb') as file:
+    with open(EPS_DATA_TESTING_PKL_L, 'wb') as file:
         pickle.dump(eps_data_dict, file)
 
 
@@ -114,7 +115,7 @@ def divident_data_downloader(tickers):
             print(f"Failed to fetch data for {ticker}: {e}")
 
     # Save the data to a pickle file
-    with open('dividend_dataAAAAA.pkl', 'wb') as file:
+    with open(DIVIDEND_DATA_TESTING_PKL_L, 'wb') as file:
         pickle.dump(dividend_data, file)
 
     return dividend_data
@@ -171,7 +172,7 @@ def shares_outstanding_data_downloader(tickers,api_key):
             print(f"Failed to fetch data for {ticker}")
 
     # Save the data to a pickle file
-    with open('shares_outstanding_data_250_testing.pkl', 'wb') as f:
+    with open(SHARE_OUTSTANDING_DATA_250_TESTING_PKL_L, 'wb') as f:
         pickle.dump(shares_data, f)
 
     print("Data saved to 'shares_outstanding_data_250.pkl'")

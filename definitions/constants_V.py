@@ -131,6 +131,16 @@ GS_BONDS_DATA_RAW_PKL_V = os.path.join(GS_BONDS_DIR_V, 'bonds_data.pkl')
 GS_STOCKS_DATA_ENRICHED_CSV_V = os.path.join(GS_STOCKS_DIR_V, 'dummy1_final.csv')
 
 
+SHARE_OUTSTANDING_DATA_250_TESTING_PKL_L = os.path.join(DATA_DIR_L, 'shares_outstanding_data_250_testing.pkl')
+SHARES_OUTSTANDING_DATA_250_UPDATED_PKL_L = os.path.join(DATA_DIR_L, 'updated_shares_outstanding_data_250.pkl')
+
+EPS_DATA_TESTING_PKL_L = os.path.join(DATA_DIR_L, 'eps_data_testing.pkl')
+EPS_DATA_UPDATED_PKL_L = os.path.join(DATA_DIR_L, 'updated_eps_data.pkl')
+
+DIVIDEND_DATA_TESTING_PKL_L = os.path.join(DATA_DIR_L, 'dividend_data_testing.pkl')
+DIVIDEND_DATA_UPDATED_PKL_L = os.path.join(DATA_DIR_L, 'updated_dividend_data.pkl')
+
+
 DV_QUANTILE_THRESHOLD_MAKE_YS_V=[0.05, 0.2, 0.33, 0.5, 0.66, 0.75, 0.9]
 SELECTED_TOP_VOL_STOCKS_MAKE_YS_V=[11, 13, 20, 27, 35, 40, 50, 75, 100, 125, 150, 200]#
 
