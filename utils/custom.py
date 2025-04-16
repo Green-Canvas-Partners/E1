@@ -613,7 +613,7 @@ def process_single_dataframe_V(*, df, momentum_windows, half_lives, mult, weight
     combined_df.sort_index(inplace=True)
     return combined_df
 
-def process_single_dataframe_L(*, df, momentum_windows, half_lives, mult, weight, number=0):
+def process_single_dataframe_L(df, momentum_windows, half_lives, mult, weight, number=0):
     """
     Process a single DataFrame to calculate momentum metrics.
 
@@ -625,7 +625,6 @@ def process_single_dataframe_L(*, df, momentum_windows, half_lives, mult, weight
     Returns:
         pd.DataFrame: DataFrame with combined momentum metrics.
     """
-
     ticker = [col.split('_')[0] for col in df.columns if '_Close' in col][0]
     close_col_name = f"{ticker}_Close"
     open_col_name = f"{ticker}_Open"

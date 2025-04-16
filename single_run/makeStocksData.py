@@ -41,64 +41,65 @@ year = stock_selector(
     YEARSTOCKS_PATH=SINGLE_RUN_YEARSTOCKS_PKL
 )
 stock_lists = year.values()
+print(stock_lists)
 combined_stocks = list(set(stock for sublist in stock_lists for stock in sublist))
+print(combined_stocks)
+# # Step 3: Add shift columns to the loaded stock data
+# all_data = add_shift_columns_to_all(all_data = all_data)
 
-# Step 3: Add shift columns to the loaded stock data
-all_data = add_shift_columns_to_all(all_data = all_data)
+# # Main function
+# def main(momentum_windows, half_lives, all_data, selected_stocks, stockstobeused):
+#     """
+#     Main function to process stock data.
 
-# Main function
-def main(momentum_windows, half_lives, all_data, selected_stocks, stockstobeused):
-    """
-    Main function to process stock data.
+#     Args:
+#         momentum_windows (list): List of momentum windows for calculations.
+#         half_lives (list): List of half-lives for exponential weighting.
+#         all_data (list): List of DataFrames containing stock data.
+#         selected_stocks (list): List of selected stocks to process.
+#         stockstobeused (dict): Dictionary of stocks selected for the specified year.
 
-    Args:
-        momentum_windows (list): List of momentum windows for calculations.
-        half_lives (list): List of half-lives for exponential weighting.
-        all_data (list): List of DataFrames containing stock data.
-        selected_stocks (list): List of selected stocks to process.
-        stockstobeused (dict): Dictionary of stocks selected for the specified year.
-
-    Returns:
-        None
-    """
-    # Step 4: Filter the data for selected stocks
-    filtered_data = [
-        df for df in all_data 
-        if df.columns[0].split('_')[0] in selected_stocks
-    ]
+#     Returns:
+#         None
+#     """
+#     # Step 4: Filter the data for selected stocks
+#     filtered_data = [
+#         df for df in all_data 
+#         if df.columns[0].split('_')[0] in selected_stocks
+#     ]
     
-    # Step 5: Process each filtered DataFrame in parallel
-    parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives)
-        for df in filtered_data
-    )
+#     # Step 5: Process each filtered DataFrame in parallel
+#     parallel_results = Parallel(n_jobs=N_JOBS)(
+#         delayed(process_single_dataframe)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives)
+#         for df in filtered_data
+#     )
 
-    # Step 6: Combine all processed DataFrames into a final DataFrame
-    final_df = makeFinalDf(parallel_results = parallel_results)
+#     # Step 6: Combine all processed DataFrames into a final DataFrame
+#     final_df = makeFinalDf(parallel_results = parallel_results)
 
-    # Step 7: Correct the final DataFrame to ensure it matches specified criteria
-    corrected_stocks_df = makeCorrectedDf(final_df = final_df, selected_stocks = stockstobeused, FOR_LIVE=FOR_LIVE)
+#     # Step 7: Correct the final DataFrame to ensure it matches specified criteria
+#     corrected_stocks_df = makeCorrectedDf(final_df = final_df, selected_stocks = stockstobeused, FOR_LIVE=FOR_LIVE)
 
-    # Step 8: Save the corrected DataFrame to a CSV file
-    if FOR_LIVE:
-        corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV, index=False)
-        print(f'Data processing complete. Results saved to: {SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV}')
-    else:
-        corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV, index=False)
-        print(f'Data processing complete. Results saved to: {SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV}')
+#     # Step 8: Save the corrected DataFrame to a CSV file
+#     if FOR_LIVE:
+#         corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV, index=False)
+#         print(f'Data processing complete. Results saved to: {SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV}')
+#     else:
+#         corrected_stocks_df.to_csv(SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV, index=False)
+#         print(f'Data processing complete. Results saved to: {SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV}')
 
-# Execute the main function
-if __name__ == "__main__":
-    """
-    Script entry point.
+# # Execute the main function
+# if __name__ == "__main__":
+#     """
+#     Script entry point.
 
-    This script processes stock data by applying momentum and exponential weighting
-    calculations, correcting the final data, and saving it to a CSV file.
-    """
-    main(
-        MOMENTUM_WINDOWS, 
-        HALF_LIVES, 
-        all_data, 
-        combined_stocks,
-        year
-    )
+#     This script processes stock data by applying momentum and exponential weighting
+#     calculations, correcting the final data, and saving it to a CSV file.
+#     """
+#     main(
+#         MOMENTUM_WINDOWS, 
+#         HALF_LIVES, 
+#         all_data, 
+#         combined_stocks,
+#         year
+#     )
