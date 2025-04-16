@@ -915,7 +915,6 @@ def calculate_stock_selection_L(*, df, df_M, SELECTED_MOM_WINDOW=252, SELECTED_H
     # dt = np.array(df[df.Stock == 'SPY'].Date)
     dt = df.Date.unique()
     stock_dict = {}
-    print('df', df)
 
     for i in dt:
         tmp = df[df.Date == i].copy()
