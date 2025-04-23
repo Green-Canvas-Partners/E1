@@ -12,7 +12,7 @@ sys.path.append(project_root)
 
 # Import constants and custom utility functions
 from definitions.constants_V import (
-    MOMENTUM_WINDOWS_V, HALF_LIVES_V, DIFF_REBALANCING_BONDS_DATA_RAW_PKL_V, DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_V, 
+    MOMENTUM_WINDOWS_V, HALF_LIVES_V, DIFF_REBALANCING_BONDS_DATA_RAW_PKL_L, DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_L, 
     MULT_V, WEIGHT_V
 )
 from definitions.constants import (
@@ -21,14 +21,14 @@ from definitions.constants import (
 
 from utils.custom import (
     download_data, add_shift_columns_to_all, 
-    process_single_dataframe_V, makeFinalDf
+    process_single_dataframe_L, makeFinalDf
 )
 
 # Step 1: Download bond data for specified tickers and date range
-download_data(tickers=BOND_TICKERS, start_date=START_DATE_DATA_DOWNLOAD, end_date=(pd.to_datetime(END_DATE_DATA_DOWNLOAD) + timedelta(days=1)).strftime('%Y-%m-%d'), bonds_data_path_raw=DIFF_REBALANCING_BONDS_DATA_RAW_PKL_V)
+download_data(tickers=BOND_TICKERS, start_date=START_DATE_DATA_DOWNLOAD, end_date=(pd.to_datetime(END_DATE_DATA_DOWNLOAD) + timedelta(days=1)).strftime('%Y-%m-%d'), bonds_data_path_raw=DIFF_REBALANCING_BONDS_DATA_RAW_PKL_L)
 
 # Step 2: Load the raw bond data from a pickle file
-with open(DIFF_REBALANCING_BONDS_DATA_RAW_PKL_V, 'rb') as f:
+with open(DIFF_REBALANCING_BONDS_DATA_RAW_PKL_L, 'rb') as f:
     all_data_bonds = pickle.load(f)
 
 # Step 3: Add shift columns to the loaded bond data
@@ -57,7 +57,7 @@ def main(momentum_windows, half_lives, mult, weight, years, all_data, selected_s
 
     # Step 5: Process each filtered DataFrame in parallel
     parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows=momentum_windows, half_lives = half_lives, mult=mult, weight=weight, number = number) 
+        delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows=momentum_windows, half_lives = half_lives, mult=mult, weight=weight, number = number) 
         for df in filtered_data
     )
 
@@ -65,7 +65,7 @@ def main(momentum_windows, half_lives, mult, weight, years, all_data, selected_s
     final_df = makeFinalDf(parallel_results=parallel_results)
 
     # Step 7: Save the final DataFrame to a CSV file
-    filename=DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_V + str(number) + ".csv"
+    filename=DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_L + str(number) + ".csv"
     final_df.to_csv(filename, index=False)
     print(f'Data processing complete. Results saved to: {filename}')
 

@@ -13,12 +13,12 @@ sys.path.append(project_root)
 from definitions.constants import BOND_TICKERS, LEN_YEARS_DV_LOOKBACK, N_JOBS, STOCKS_DATA_RAW_PKL, YEARS, YEARSTOCKS, FOR_LIVE
 
 from definitions.constants_V import (
-    MOMENTUM_WINDOWS_V, HALF_LIVES_V, DV_QUANTILE_THRESHOLD_V, SELECTED_TOP_VOL_STOCKS_V, SINGLE_RUN_YEARSTOCKS_LIVE_PKL_V,
-    DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_V, SINGLE_RUN_YEARSTOCKS_PKL_V, MULT_V, WEIGHT_V
+    MOMENTUM_WINDOWS_V, HALF_LIVES_V, DV_QUANTILE_THRESHOLD_V, SELECTED_TOP_VOL_STOCKS_V, SINGLE_RUN_YEARSTOCKS_LIVE_PKL_L,
+    DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_L, SINGLE_RUN_YEARSTOCKS_PKL_L, MULT_V, WEIGHT_V
 )
 
 from utils.custom import (
-    add_shift_columns_to_all, process_single_dataframe_V, 
+    add_shift_columns_to_all, process_single_dataframe_L, 
     stock_selector, makeFinalDf, makeCorrectedDf
 )
 
@@ -37,8 +37,8 @@ year = stock_selector(
     N_JOBS=N_JOBS,
     SELECTED_TOP_VOL_STOCKS=SELECTED_TOP_VOL_STOCKS_V,
     FOR_LIVE=FOR_LIVE,
-    YEARSTOCKS_PATH_LIVE=SINGLE_RUN_YEARSTOCKS_LIVE_PKL_V,
-    YEARSTOCKS_PATH=SINGLE_RUN_YEARSTOCKS_PKL_V
+    YEARSTOCKS_PATH_LIVE=SINGLE_RUN_YEARSTOCKS_LIVE_PKL_L,
+    YEARSTOCKS_PATH=SINGLE_RUN_YEARSTOCKS_PKL_L
 )
 stock_lists = year.values()
 combined_stocks = list(set(stock for sublist in stock_lists for stock in sublist))
@@ -69,7 +69,7 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
     
     # Step 5: Process each filtered DataFrame in parallel
     parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe_V)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight, number = number)
+        delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight, number = number)
         for df in filtered_data
     )
 
@@ -80,7 +80,7 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
     corrected_stocks_df = makeCorrectedDf(final_df = final_df, selected_stocks = stockstobeused, FOR_LIVE=FOR_LIVE)
 
     # Step 8: Save the corrected DataFrame to a CSV file
-    filename=DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_V + str(number) + ".csv"
+    filename=DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_L + str(number) + ".csv"
     corrected_stocks_df.to_csv(filename, index=False)
     print(f'Data processing complete. Results saved to: {filename}')
 

@@ -411,7 +411,7 @@ def calculate_monthly_momentum(*, df, close_col_name, open_col_name, close_col_n
     return pd.DataFrame(momentum_values, columns=['Date', f'Momentum_{window}_{half_life}', 'Close', 'Open', 'Close_shift', 'Open_shift'])
 
 
-def calculate_monthly_liquidity(df, close_col_name,open_col_name,close_col_name_shift,open_col_name_shift,Volume_col_name,volume_col_name_shift, window, half_life,ticker):
+def calculate_monthly_liquidity(*, df, close_col_name,open_col_name,close_col_name_shift,open_col_name_shift,Volume_col_name,volume_col_name_shift, window, half_life,ticker, number=0):
     """
     Calculate monthly liquidity for a given DataFrame.
 
@@ -419,7 +419,7 @@ def calculate_monthly_liquidity(df, close_col_name,open_col_name,close_col_name_
         df (pd.DataFrame): Stock data DataFrame.
 
 """
-
+        
     tail = len(df)
     momentum_values = []
     index = 0
@@ -427,6 +427,7 @@ def calculate_monthly_liquidity(df, close_col_name,open_col_name,close_col_name_
     window12m = window+330
 
     while tail - window > 0:
+        tail = tail - number
         last_date = df.iloc[tail - 1].name
         last_close = df[Volume_col_name].iloc[tail - 1]
         last_open = df[open_col_name].iloc[tail - 1]
@@ -640,13 +641,13 @@ def process_single_dataframe_L(df, momentum_windows, half_lives, mult, weight, n
     for window in momentum_windows:
         for half_life in half_lives:
             if counter ==0:
-                momentum_df = calculate_monthly_liquidity(df, close_col_name,open_col_name,close_col_name_shift,
-                                                       open_col_name_shift,Volume_col_name,volume_col_name_shift, window, half_life,ticker)
+                momentum_df = calculate_monthly_liquidity(df = df, close_col_name = close_col_name,open_col_name = open_col_name,close_col_name_shift = close_col_name_shift,
+                                                       open_col_name_shift = open_col_name_shift,Volume_col_name = Volume_col_name,volume_col_name_shift = volume_col_name_shift, window = window, half_life = half_life,ticker = ticker, number = number)
                 momentum_df.set_index('Date', inplace=True)
                 momentum_dfs.append(momentum_df)
             else:
-                momentum_df = calculate_monthly_liquidity(df, close_col_name,open_col_name,close_col_name_shift,
-                                                       open_col_name_shift,Volume_col_name,volume_col_name_shift, window, half_life,ticker)
+                momentum_df = calculate_monthly_liquidity(df = df, close_col_name = close_col_name,open_col_name = open_col_name,close_col_name_shift = close_col_name_shift,
+                                                       open_col_name_shift = open_col_name_shift,Volume_col_name = Volume_col_name,volume_col_name_shift = volume_col_name_shift, window = window, half_life = half_life,ticker = ticker, number = number)
                 momentum_df.set_index('Date', inplace=True)
                 momentum_dfs.append(momentum_df[[f'Momentum_{window}_{half_life}']])
             counter = counter+1

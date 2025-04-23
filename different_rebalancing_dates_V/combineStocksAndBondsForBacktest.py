@@ -14,11 +14,11 @@ sys.path.append(project_root)
 import pickle
 from definitions.constants import SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, DIFF_REBALANCING_COMBINED_DATA_CSV, SELECTED_N_STOCK_POSITIVE
 from definitions.constants_V import  (SELECTED_MULT_V, SELECTED_WEIGHT_V, EXP_WEIGHT_V, SELECTED_HALF_LIFE_WINDOW_V, SELECTED_MOM_WINDOW_V, 
-                                      SELECTED_N_STOCK_CHOSE_V, DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_V, 
-                                      DIFF_REBALANCING_COMBINED_DATA_CSV_V, DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_V, 
-                                      DIFF_REBALANCING_STOCK_DICT_PKL_V, DIFF_REBALANCING_RETURNS_PKL_V,
+                                      SELECTED_N_STOCK_CHOSE_V, DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_L, 
+                                      DIFF_REBALANCING_COMBINED_DATA_CSV_L, DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_L, 
+                                      DIFF_REBALANCING_STOCK_DICT_PKL_L, DIFF_REBALANCING_RETURNS_PKL_L,
                                       SELECTED_N_STOCK_POSITIVE_V)
-from utils.custom import calculate_returns_V, calculate_stock_selection_V, exponential_weights, load_and_preprocess_data
+from utils.custom import calculate_returns_L, calculate_stock_selection_L, exponential_weights, load_and_preprocess_data
 
 import numpy as np
 
@@ -39,12 +39,12 @@ def main(number):
         5. Calculate and save returns.
     """
     # Step 1: Load and preprocess data from bonds and stocks
-    bonds_filename=DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_V+ str(number) + ".csv"
-    stocks_filename=DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_V + str(number) + ".csv"
+    bonds_filename=DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_L+ str(number) + ".csv"
+    stocks_filename=DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_L + str(number) + ".csv"
 
     df = load_and_preprocess_data(file1=bonds_filename, file2=stocks_filename)
 
-    filename=DIFF_REBALANCING_COMBINED_DATA_CSV_V + str(number) + ".csv"
+    filename=DIFF_REBALANCING_COMBINED_DATA_CSV_L + str(number) + ".csv"
     df.to_csv(filename, index=False)  # Save concatenated data to file
 
     filename=DIFF_REBALANCING_COMBINED_DATA_CSV + str(number) + ".csv"
@@ -52,17 +52,20 @@ def main(number):
         
     # Step 2: Filter and sort data to include only required columns
     df = df[
-        ['Date', f'Momentum_{SELECTED_MOM_WINDOW_V}_{SELECTED_HALF_LIFE_WINDOW_V}_{SELECTED_MULT_V}_{SELECTED_WEIGHT_V}', 'Stock', 'Returns']
+        ['Date', f'Momentum_{SELECTED_MOM_WINDOW_V}_{SELECTED_HALF_LIFE_WINDOW_V}', 'Stock', 'Returns']
     ].sort_values('Date').reset_index(drop=True)
 
     df_M = df_M[
         ['Date', f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}', 'Stock', 'Returns']
     ].sort_values('Date').reset_index(drop=True)
 
-    # Step 3: Calculate stock selection based on momentum metrics
-    stock_dict = calculate_stock_selection_V(df = df, df_M = df_M, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW_V, SELECTED_HALF_LIFE_WINDOW=SELECTED_HALF_LIFE_WINDOW_V, SELECTED_MULT=SELECTED_MULT_V, SELECTED_WEIGHT=SELECTED_WEIGHT_V, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE_V, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE_V, SELECTED_MOM_WINDOW_M=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW_M=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE_M=SELECTED_N_STOCK_POSITIVE)
+    df_M= df_M[df_M['Date']>'2009-12-31']
+    df= df[df['Date']>'2009-12-31']
 
-    stock_dict_filename=DIFF_REBALANCING_STOCK_DICT_PKL_V + str(number) + ".pkl"
+    # Step 3: Calculate stock selection based on momentum metrics
+    stock_dict = calculate_stock_selection_L(df = df, df_M = df_M, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW_V, SELECTED_HALF_LIFE_WINDOW=SELECTED_HALF_LIFE_WINDOW_V, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE_V, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE_V, SELECTED_MOM_WINDOW_M=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW_M=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE_M=SELECTED_N_STOCK_POSITIVE)
+
+    stock_dict_filename=DIFF_REBALANCING_STOCK_DICT_PKL_L + str(number) + ".pkl"
     with open(stock_dict_filename, 'wb') as file:
         pickle.dump(stock_dict, file)
 
@@ -74,9 +77,9 @@ def main(number):
     )
 
     # Step 5: Calculate portfolio returns
-    returns = calculate_returns_V(stock_dict = stock_dict, df = df, weights = weights, mom = SELECTED_MOM_WINDOW_V, half = SELECTED_HALF_LIFE_WINDOW_V, mult = SELECTED_MULT_V, w = SELECTED_WEIGHT_V)
+    returns = calculate_returns_L(stock_dict = stock_dict, df = df, weights = weights, mom = SELECTED_MOM_WINDOW_V, half = SELECTED_HALF_LIFE_WINDOW_V)
 
-    returns_diff_rebalancing = DIFF_REBALANCING_RETURNS_PKL_V + str(number) + ".pkl"
+    returns_diff_rebalancing = DIFF_REBALANCING_RETURNS_PKL_L + str(number) + ".pkl"
     with open(returns_diff_rebalancing, 'wb') as file:
         pickle.dump(returns, file)
 
