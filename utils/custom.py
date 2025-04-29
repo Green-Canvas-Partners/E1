@@ -889,7 +889,7 @@ def exponential_weights(*, length, alpha=0.85):
     return weights[::-1]  # Return weights in reverse order
 
 
-def load_and_preprocess_data(*, file1, file2, FOR_LIVE=False):
+def load_and_preprocess_data(*, file2, FOR_LIVE=False):
     """
     Load and preprocess data from two CSV files, concatenate them, and save the result.
 
@@ -900,11 +900,9 @@ def load_and_preprocess_data(*, file1, file2, FOR_LIVE=False):
     Returns:
         pd.DataFrame: Concatenated DataFrame after preprocessing.
     """
-    if FOR_LIVE:
-        data1 = pd.read_csv(file1)  # Drop rows with missing values
+    if FOR_LIVE:  # Drop rows with missing values
         data2 = pd.read_csv(file2)
     else:
-        data1 = pd.read_csv(file1).dropna(axis=0)  # Drop rows with missing values
         data2 = pd.read_csv(file2).dropna(axis=0)
 
     concatenated = pd.concat([data2])  # Concatenate both DataFrames
@@ -978,7 +976,7 @@ def calculate_stock_selection(*, df, SELECTED_MOM_WINDOW=252, SELECTED_HALF_LIFE
 
     return stock_dict
 
-def calculate_stock_selection_L(*, df, df_M, SELECTED_MOM_WINDOW=252, SELECTED_HALF_LIFE_WINDOW=252, SELECTED_MULT=1.01, SELECTED_WEIGHT=0.9, SELECTED_N_STOCK_POSITIVE=3, SELECTED_N_STOCK_CHOSE=1, SELECTED_MOM_WINDOW_M=252, SELECTED_HALF_LIFE_WINDOW_M=252, SELECTED_N_STOCK_POSITIVE_M=3):
+def calculate_stock_selection_L(*, df, df_M, SELECTED_N_STOCK_POSITIVE=3, SELECTED_N_STOCK_CHOSE=1, SELECTED_MOM_WINDOW_M=252, SELECTED_HALF_LIFE_WINDOW_M=252, SELECTED_N_STOCK_POSITIVE_M=3):
     """
     Select stocks based on their momentum values.
 
@@ -998,8 +996,8 @@ def calculate_stock_selection_L(*, df, df_M, SELECTED_MOM_WINDOW=252, SELECTED_H
 
     for i in dt:
         tmp = df[df.Date == i].copy()
-        sorted_tmp = tmp.sort_values(f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}', ascending=False).drop_duplicates()
-        positive_momentum_stocks = sorted_tmp[sorted_tmp[f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}'] > 0]
+        sorted_tmp = tmp.sort_values(f'earnings_yield', ascending=False).drop_duplicates()
+        positive_momentum_stocks = sorted_tmp[sorted_tmp['earnings_yield'] > 0]
         tmp_M = df_M[df_M.Date == i].copy()
         sorted_tmp_M = tmp_M.sort_values(f'Momentum_{SELECTED_MOM_WINDOW_M}_{SELECTED_HALF_LIFE_WINDOW_M}', ascending=False).drop_duplicates()
         positive_momentum_stocks_M = sorted_tmp_M[sorted_tmp_M[f'Momentum_{SELECTED_MOM_WINDOW_M}_{SELECTED_HALF_LIFE_WINDOW_M}'] > 0]
@@ -1068,7 +1066,7 @@ def calculate_returns(*, stock_dict, df, weights, mom, half):
 
     return pd.Series(returns) * 100
 
-def calculate_returns_L(*, stock_dict, df, weights, mom, half):
+def calculate_returns_L(*, stock_dict, df, weights,):
     """
     Calculate portfolio returns based on selected stocks and weights.
 
@@ -1084,7 +1082,7 @@ def calculate_returns_L(*, stock_dict, df, weights, mom, half):
     for date, stocks in stock_dict.items():
         tmp = df[df.Date == date].copy()
         tmp = tmp[tmp['Stock'].isin(stocks)]
-        tmp = tmp.sort_values(by=f'Momentum_{mom}_{half}', ascending=True)
+        tmp = tmp.sort_values(by='earnings_yield', ascending=True)
 
         if len(tmp) == 0:
             returns[date] = 0

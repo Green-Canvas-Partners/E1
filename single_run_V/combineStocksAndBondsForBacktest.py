@@ -39,19 +39,16 @@ def main():
     """
     # Step 1: Load and preprocess data from bonds and stocks
     if FOR_LIVE:
-        df = load_and_preprocess_data(file1 = SINGLE_RUN_BONDS_DATA_ENRICHED_LIVE_CSV_L, file2 = SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L, FOR_LIVE = FOR_LIVE)
+        df = load_and_preprocess_data(file2 = SINGLE_RUN_STOCKS_DATA_ENRICHED_LIVE_CSV_L, FOR_LIVE = FOR_LIVE)
         df.to_csv(SINGLE_RUN_COMBINED_DATA_LIVE_CSV_L, index=False)
 
         df_M = pd.read_csv(SINGLE_RUN_COMBINED_DATA_LIVE_CSV)
     else:
-        df = load_and_preprocess_data(file1=SINGLE_RUN_BONDS_DATA_ENRICHED_CSV_L, file2=SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_L, FOR_LIVE=FOR_LIVE)
+        df = load_and_preprocess_data(file2=SINGLE_RUN_STOCKS_DATA_ENRICHED_CSV_L, FOR_LIVE=FOR_LIVE)
         df.to_csv(SINGLE_RUN_COMBINED_DATA_CSV_L, index=False)  # Save concatenated data to file
 
         df_M = pd.read_csv(SINGLE_RUN_COMBINED_DATA_CSV)
     # Step 2: Filter and sort data to include only required columns
-    df = df[
-        ['Date', f'Momentum_{SELECTED_MOM_WINDOW_V}_{SELECTED_HALF_LIFE_WINDOW_V}', 'Stock', 'Returns']
-    ].sort_values('Date').reset_index(drop=True)
 
     df_M = df_M[
         ['Date', f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}', 'Stock', 'Returns']
@@ -61,7 +58,7 @@ def main():
     df= df[df['Date']>'2009-12-31']
 
     # Step 3: Calculate stock selection based on momentum metrics
-    stock_dict = calculate_stock_selection_L(df = df, df_M = df_M, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW_V, SELECTED_HALF_LIFE_WINDOW=SELECTED_HALF_LIFE_WINDOW_V, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE_V, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE_V, SELECTED_MOM_WINDOW_M=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW_M=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE_M=SELECTED_N_STOCK_POSITIVE)
+    stock_dict = calculate_stock_selection_L(df = df, df_M = df_M, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE_V, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE_V, SELECTED_MOM_WINDOW_M=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW_M=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE_M=SELECTED_N_STOCK_POSITIVE)
     if FOR_LIVE:
         with open(SINGLE_RUN_LIVE_STOCK_DICT_PKL_L, 'wb') as file:
             pickle.dump(stock_dict, file)
@@ -77,7 +74,7 @@ def main():
     )
 
     # Step 5: Calculate portfolio returns
-    returns = calculate_returns_L(stock_dict = stock_dict, df = df, weights = weights, mom = SELECTED_MOM_WINDOW_V, half = SELECTED_HALF_LIFE_WINDOW_V)
+    returns = calculate_returns_L(stock_dict = stock_dict, df = df, weights = weights)
 
 
     if FOR_LIVE:
