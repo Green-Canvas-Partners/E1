@@ -29,7 +29,7 @@ from utils.custom import (
 if USE_RAY:
     # Define the runtime environment
     runtime_env = {
-        "working_dir": "/home/iyad/L1_DIR/L1"
+        "working_dir": "/home/iyad/E1_DIR/E1"
     }
 
     # Initialize Ray with the runtime environment
