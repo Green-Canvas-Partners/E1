@@ -1142,7 +1142,38 @@ def makeFinalDf(*, parallel_results):
 
     final_df = pd.concat(all_results)
     final_df.reset_index(inplace=True)
-    return final_df
+
+    number=1
+    df = final_df
+    df['Date'] = pd.to_datetime(df['Date'])
+    df = df[df['Date']<"2024-12-01"]
+
+    # Group by month and get unique dates
+    df['YearMonth'] = df['Date'].dt.to_period('M')
+    second_last_dates = df.groupby('YearMonth')['Date'].unique().apply(lambda x: sorted(x)[-number])
+    # # print(second_last_dates)
+
+    # Filter the DataFrame to get all stocks on second last trading days
+    second_last_day_df = df[df['Date'].isin(second_last_dates)]
+    df = second_last_day_df.sort_values('Date')
+    df.dropna(axis=0,inplace=True)
+
+    
+
+
+    # Calculate returns
+    lstt = []
+    for stock in df.Stock.unique():
+        temp_df = df[df['Stock'] == stock]
+        temp_df.sort_values('Date', inplace=True)
+        temp_df['Returns'] = temp_df.Open_shift.pct_change()
+        temp_df['Returns'] = temp_df['Returns'].shift(-1)
+        lstt.append(temp_df)
+
+    final_df = pd.concat(lstt)
+
+    final_dff = final_df[final_df['Date']<'2024-12-01']
+    return final_dff
 
 
 def makeCorrectedDf(*, final_df, selected_stocks, FOR_LIVE=False):

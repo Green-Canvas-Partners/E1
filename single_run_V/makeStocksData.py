@@ -72,7 +72,7 @@ combined_stocks = list(set(stock for sublist in stock_lists for stock in sublist
 all_data = add_shift_columns_to_all(all_data = all_data)
 
 # Main function
-def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, stockstobeused):
+def main(all_data, selected_stocks, stockstobeused):
     """
     Main function to process stock data.
 
@@ -129,10 +129,6 @@ if __name__ == "__main__":
     """
     start_time = time.time()  # Start timing
     main(
-        MOMENTUM_WINDOWS_V, 
-        HALF_LIVES_V, 
-        MULT_V,
-        WEIGHT_V,
         all_data, 
         combined_stocks,
         year
