@@ -22,7 +22,7 @@ from definitions.constants_V import (
 )
 
 from utils.custom import (
-    add_shift_columns_to_all, process_single_dataframe_L, 
+    add_shift_columns_to_all, process_single_dataframe_E, 
     stock_selector, makeFinalDf, makeCorrectedDf
 )
 
@@ -39,7 +39,7 @@ if USE_RAY:
     # Wrap the function with Ray's remote decorator
     @ray.remote
     def process_single_dataframe_V_remote(*args, **kwargs):
-        return process_single_dataframe_L(*args, **kwargs)
+        return process_single_dataframe_E(*args, **kwargs)
 
 if FOR_LIVE:
     # Step 1: Load raw stock data from pickle file
@@ -67,7 +67,6 @@ year = stock_selector(
 
 stock_lists = year.values()
 combined_stocks = list(set(stock for sublist in stock_lists for stock in sublist))
-combined_stocks = [stock for stock in combined_stocks if stock not in etfs_to_exclude]
 
 # Step 3: Add shift columns to the loaded stock data
 all_data = add_shift_columns_to_all(all_data = all_data)
@@ -105,7 +104,7 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
         print("here")
         # Step 5: Process each filtered DataFrame in parallel
         parallel_results = Parallel(n_jobs=N_JOBS)(
-            delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight)
+            delayed(process_single_dataframe_E)(df = df.copy())
             for df in filtered_data
         )
     # Step 6: Combine all processed DataFrames into a final DataFrame

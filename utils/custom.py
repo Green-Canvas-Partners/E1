@@ -615,6 +615,9 @@ def process_single_dataframe_V(*, df, momentum_windows, half_lives, mult, weight
     combined_df.sort_index(inplace=True)
     return combined_df
 
+
+
+
 def process_single_dataframe_L(df, momentum_windows, half_lives, mult, weight, number=0):
     """
     Process a single DataFrame to calculate momentum metrics.
@@ -659,6 +662,82 @@ def process_single_dataframe_L(df, momentum_windows, half_lives, mult, weight, n
     combined_df.sort_index(inplace=True)
     return combined_df
 
+
+def process_single_dataframe_E(df, number=0):
+    """
+    Process a single DataFrame to calculate momentum metrics.
+
+    Args:
+        df (pd.DataFrame): Stock data DataFrame.
+        momentum_windows (list): List of momentum windows to use.
+        half_lives (list): List of half-lives to use.
+
+    Returns:
+        pd.DataFrame: DataFrame with combined momentum metrics.
+    """
+
+
+    with open(DIVIDEND_DATA_UPDATED_PKL_L, 'rb') as file:
+        divident = pickle.load(file)
+    with open(EPS_DATA_UPDATED_PKL_L, 'rb') as file:
+        eps = pickle.load(file)
+    with open(SHARES_OUTSTANDING_DATA_250_UPDATED_PKL_L, 'rb') as file:
+        shares = pickle.load(file)
+
+
+    ticker = [col.split('_')[0] for col in df.columns if '_Close' in col][0]
+    if ticker in shares:
+        # print(ticker)
+        shar = shares[ticker]
+        div = divident[ticker]
+        earning = eps[ticker]
+
+        div = pd.DataFrame(div)
+        div.reset_index(inplace=True)
+        
+        shar['Shares Outstanding'] = shar['Shares Outstanding'].astype(str).str[:-4].astype(int)
+
+        filtered_da = df
+        filtered_da.reset_index(inplace=True)
+
+        filtered_da['Date'] = pd.to_datetime(filtered_da['Date'])
+        shar['Date'] = pd.to_datetime(shar['Date'])
+        earning['reportDate'] = pd.to_datetime(earning['reportDate'])
+        div['Date'] = pd.to_datetime(div['Date'])
+
+        shar = shar.sort_values('Date')
+        div = div.sort_values('Date')
+        earning = earning.sort_values('reportDate')
+        earning['Date'] = earning['reportDate']
+
+        daily_dates_shares = pd.date_range(start=shar['Date'].min(), end=shar['Date'].max(), freq='D')
+        daily_df_shares = pd.DataFrame(daily_dates_shares, columns=['Date'])
+
+        daily_shares = pd.merge(daily_df_shares, shar, on='Date', how='left')
+        daily_divident = pd.merge(daily_df_shares, div, on='Date', how='left')
+        daily_earnings = pd.merge(daily_df_shares, earning, on='Date', how='left')
+
+        daily_shares['Shares Outstanding'] = daily_shares['Shares Outstanding'].fillna(method='ffill')
+        daily_divident['Dividends'] = daily_divident['Dividends'].fillna(method='ffill')
+        daily_earnings['epsActual'] = daily_earnings['epsActual'].fillna(method='ffill')
+
+        combined_df = pd.merge(daily_shares,filtered_da,on='Date')
+        combined_df = pd.merge(daily_divident,combined_df,on='Date')
+        combined_df = pd.merge(daily_earnings,combined_df,on='Date')
+
+        a = combined_df
+        a['market cap'] = a['Shares Outstanding'] * a[f'{ticker}_Close']
+        a['earn yield'] = (a['epsActual'] * a['Shares Outstanding'])/a['market cap']
+        a['Dividends'].fillna(0,inplace=True)
+        a['earningsTTM'] = (a['Dividends'] * 4)/ a['market cap']
+        a['earningsTTM2'] = (a['Dividends'] * 4)/ a[f'{ticker}_Close']
+        a['earnings_yield'] = 0.75 * a['earn yield'] + 0.15 * a['earningsTTM'] + 0.10 * a['earningsTTM2']
+        a['Stock'] = ticker
+        # print(a)
+        a = a[['Date','Stock','earnings_yield',f'{ticker}_Open_shift']]
+
+        a.rename(columns={f'{ticker}_Open_shift': 'Open_shift'}, inplace=True)
+        return a
 
 
 
@@ -1063,17 +1142,6 @@ def makeFinalDf(*, parallel_results):
 
     final_df = pd.concat(all_results)
     final_df.reset_index(inplace=True)
-
-    # Calculate returns
-    lstt = []
-    for stock in final_df.Stock.unique():
-        temp_df = final_df[final_df['Stock'] == stock]
-        temp_df.sort_values('Date', inplace=True)
-        temp_df['Returns'] = temp_df.Open_shift.pct_change()
-        temp_df['Returns'] = temp_df['Returns'].shift(-1)
-        lstt.append(temp_df)
-
-    final_df = pd.concat(lstt)
     return final_df
 
 
