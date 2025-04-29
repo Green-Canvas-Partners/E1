@@ -15,7 +15,7 @@ from definitions.constants import BOND_TICKERS, LEN_YEARS_DV_LOOKBACK, N_JOBS, S
 from definitions.constants_V import (
     MOMENTUM_WINDOWS_V, HALF_LIVES_V, DV_QUANTILE_THRESHOLD_V, SELECTED_TOP_VOL_STOCKS_V, SINGLE_RUN_YEARSTOCKS_LIVE_PKL_L,
     DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_L, SINGLE_RUN_YEARSTOCKS_PKL_L, MULT_V, WEIGHT_V
-)
+,etfs_to_exclude)
 
 from utils.custom import (
     add_shift_columns_to_all, process_single_dataframe_L, 
@@ -42,6 +42,7 @@ year = stock_selector(
 )
 stock_lists = year.values()
 combined_stocks = list(set(stock for sublist in stock_lists for stock in sublist))
+combined_stocks = [stock for stock in combined_stocks if stock not in etfs_to_exclude]
 
 # Step 3: Add shift columns to the loaded stock data
 all_data = add_shift_columns_to_all(all_data = all_data)
@@ -69,7 +70,7 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
     
     # Step 5: Process each filtered DataFrame in parallel
     parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, mult=mult, weight=weight, number = number)
+        delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, number = number,mult=mult, weight=weight)
         for df in filtered_data
     )
 
@@ -101,5 +102,5 @@ if __name__ == "__main__":
             all_data, 
             combined_stocks,
             year, 
-            number
+            number,
         )

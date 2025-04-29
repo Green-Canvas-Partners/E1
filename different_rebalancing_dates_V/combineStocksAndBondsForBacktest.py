@@ -88,5 +88,5 @@ if __name__ == "__main__":
     """
     Entry point for the script. Executes the main function.
     """
-    for number in range(18):
+    for number in range(1):
         main(number)
