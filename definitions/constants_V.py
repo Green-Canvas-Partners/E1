@@ -2,9 +2,9 @@ from datetime import datetime, timedelta
 import os
 import pandas as pd
 # Root directories
-ROOT_DIR = '/home/iyad/L1_DIR'
+ROOT_DIR = '/home/iyad/E1_DIR'
 
-DATA_DIR_L = os.path.join(ROOT_DIR, 'data_L')
+DATA_DIR_L = os.path.join(ROOT_DIR, 'data_E')
 
 
 SINGLE_RUN_DIR_L = os.path.join(DATA_DIR_L, 'single_run')
@@ -218,7 +218,7 @@ MULT_V = [1.01] #1.01, 1.5, 2.0, 4.0, 6.0
 WEIGHT_V = [0.9] #0.1, 0.5, 0.9
 
 # Selection criteria
-SELECTED_TOP_VOL_STOCKS_V = 11
+SELECTED_TOP_VOL_STOCKS_V = 16
 SELECTED_MOM_WINDOW_V = 60
 SELECTED_HALF_LIFE_WINDOW_V = 60
 SELECTED_N_STOCK_POSITIVE_V = 4
