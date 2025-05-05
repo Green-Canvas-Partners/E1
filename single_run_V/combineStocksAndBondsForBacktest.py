@@ -54,8 +54,8 @@ def main():
         ['Date', f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}', 'Stock', 'Returns']
     ].sort_values('Date').reset_index(drop=True)
 
-    df_M= df_M[df_M['Date']>'2009-12-31']
-    df= df[df['Date']>'2009-12-31']
+    df_M= df_M[df_M['Date']>'2008-01-01']
+    df= df[df['Date']>'2008-01-01']
 
     # Step 3: Calculate stock selection based on momentum metrics
     stock_dict = calculate_stock_selection_L(df = df, df_M = df_M, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE_V, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE_V, SELECTED_MOM_WINDOW_M=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW_M=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE_M=SELECTED_N_STOCK_POSITIVE)
