@@ -42,7 +42,7 @@ def main(number):
     bonds_filename=DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_L+ str(number) + ".csv"
     stocks_filename=DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV_L + str(number) + ".csv"
 
-    df = load_and_preprocess_data(file1=bonds_filename, file2=stocks_filename)
+    df = load_and_preprocess_data(file2=stocks_filename)
 
     filename=DIFF_REBALANCING_COMBINED_DATA_CSV_L + str(number) + ".csv"
     df.to_csv(filename, index=False)  # Save concatenated data to file
@@ -51,19 +51,18 @@ def main(number):
     df_M = pd.read_csv(filename)
         
     # Step 2: Filter and sort data to include only required columns
-    df = df[
-        ['Date', f'Momentum_{SELECTED_MOM_WINDOW_V}_{SELECTED_HALF_LIFE_WINDOW_V}', 'Stock', 'Returns']
-    ].sort_values('Date').reset_index(drop=True)
 
     df_M = df_M[
         ['Date', f'Momentum_{SELECTED_MOM_WINDOW}_{SELECTED_HALF_LIFE_WINDOW}', 'Stock', 'Returns']
     ].sort_values('Date').reset_index(drop=True)
 
-    df_M= df_M[df_M['Date']>'2009-12-31']
-    df= df[df['Date']>'2009-12-31']
+    df_M= df_M[df_M['Date']>'2008-01-01']
+    df= df[df['Date']>'2008-01-01']
+
+    print(df.head())
 
     # Step 3: Calculate stock selection based on momentum metrics
-    stock_dict = calculate_stock_selection_L(df = df, df_M = df_M, SELECTED_MOM_WINDOW=SELECTED_MOM_WINDOW_V, SELECTED_HALF_LIFE_WINDOW=SELECTED_HALF_LIFE_WINDOW_V, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE_V, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE_V, SELECTED_MOM_WINDOW_M=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW_M=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE_M=SELECTED_N_STOCK_POSITIVE)
+    stock_dict = calculate_stock_selection_L(df = df, df_M = df_M, SELECTED_N_STOCK_POSITIVE=SELECTED_N_STOCK_POSITIVE_V, SELECTED_N_STOCK_CHOSE=SELECTED_N_STOCK_CHOSE_V, SELECTED_MOM_WINDOW_M=SELECTED_MOM_WINDOW, SELECTED_HALF_LIFE_WINDOW_M=SELECTED_HALF_LIFE_WINDOW, SELECTED_N_STOCK_POSITIVE_M=SELECTED_N_STOCK_POSITIVE)
 
     stock_dict_filename=DIFF_REBALANCING_STOCK_DICT_PKL_L + str(number) + ".pkl"
     with open(stock_dict_filename, 'wb') as file:
@@ -77,7 +76,7 @@ def main(number):
     )
 
     # Step 5: Calculate portfolio returns
-    returns = calculate_returns_L(stock_dict = stock_dict, df = df, weights = weights, mom = SELECTED_MOM_WINDOW_V, half = SELECTED_HALF_LIFE_WINDOW_V)
+    returns = calculate_returns_L(stock_dict = stock_dict, df = df, weights = weights)
 
     returns_diff_rebalancing = DIFF_REBALANCING_RETURNS_PKL_L + str(number) + ".pkl"
     with open(returns_diff_rebalancing, 'wb') as file:
@@ -88,5 +87,5 @@ if __name__ == "__main__":
     """
     Entry point for the script. Executes the main function.
     """
-    for number in range(1):
+    for number in range(18):
         main(number)

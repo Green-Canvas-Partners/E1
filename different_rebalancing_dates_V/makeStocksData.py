@@ -18,7 +18,7 @@ from definitions.constants_V import (
 ,etfs_to_exclude)
 
 from utils.custom import (
-    add_shift_columns_to_all, process_single_dataframe_L, 
+    add_shift_columns_to_all, process_single_dataframe_E, 
     stock_selector, makeFinalDf, makeCorrectedDf
 )
 
@@ -42,13 +42,13 @@ year = stock_selector(
 )
 stock_lists = year.values()
 combined_stocks = list(set(stock for sublist in stock_lists for stock in sublist))
-combined_stocks = [stock for stock in combined_stocks if stock not in etfs_to_exclude]
+# combined_stocks = [stock for stock in combined_stocks if stock not in etfs_to_exclude]
 
 # Step 3: Add shift columns to the loaded stock data
 all_data = add_shift_columns_to_all(all_data = all_data)
 
 # Main function
-def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, stockstobeused, number):
+def main(all_data, selected_stocks, stockstobeused, number):
     """
     Main function to process stock data.
 
@@ -70,12 +70,12 @@ def main(momentum_windows, half_lives, mult, weight, all_data, selected_stocks, 
     
     # Step 5: Process each filtered DataFrame in parallel
     parallel_results = Parallel(n_jobs=N_JOBS)(
-        delayed(process_single_dataframe_L)(df = df.copy(), momentum_windows = momentum_windows, half_lives = half_lives, number = number,mult=mult, weight=weight)
+        delayed(process_single_dataframe_E)(df = df.copy())
         for df in filtered_data
     )
 
     # Step 6: Combine all processed DataFrames into a final DataFrame
-    final_df = makeFinalDf(parallel_results = parallel_results)
+    final_df = makeFinalDf(parallel_results = parallel_results,number=number)
 
     # Step 7: Correct the final DataFrame to ensure it matches specified criteria
     corrected_stocks_df = makeCorrectedDf(final_df = final_df, selected_stocks = stockstobeused, FOR_LIVE=FOR_LIVE)
@@ -93,14 +93,11 @@ if __name__ == "__main__":
     This script processes stock data by applying momentum and exponential weighting
     calculations, correcting the final data, and saving it to a CSV file.
     """
-    for number in range(18):
+    for number in range(0,18):
         main(
-            MOMENTUM_WINDOWS_V, 
-            HALF_LIVES_V, 
-            MULT_V,
-            WEIGHT_V,
             all_data, 
             combined_stocks,
             year, 
             number,
         )
+

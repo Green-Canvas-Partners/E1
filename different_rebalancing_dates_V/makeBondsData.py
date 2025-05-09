@@ -68,6 +68,7 @@ def main(momentum_windows, half_lives, mult, weight, years, all_data, selected_s
     filename=DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV_L + str(number) + ".csv"
     final_df.to_csv(filename, index=False)
     print(f'Data processing complete. Results saved to: {filename}')
+    print(final_df.head())
 
 if __name__ == "__main__":
     """
@@ -77,7 +78,7 @@ if __name__ == "__main__":
     calculations, and saves the enriched data to a CSV file.
     """
 
-    for number in range(18):
+    for number in range(1):
         main(
             MOMENTUM_WINDOWS_V, 
             HALF_LIVES_V, 

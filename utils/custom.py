@@ -888,6 +888,26 @@ def exponential_weights(*, length, alpha=0.85):
     weights /= weights.sum()  # Normalize weights to sum to 1
     return weights[::-1]  # Return weights in reverse order
 
+def load_and_preprocess_data_M(*, file1, file2, FOR_LIVE=False):
+    """
+    Load and preprocess data from two CSV files, concatenate them, and save the result.
+
+    Args:
+        file1 (str): Path to the first CSV file.
+        file2 (str): Path to the second CSV file.
+
+    Returns:
+        pd.DataFrame: Concatenated DataFrame after preprocessing.
+    """
+    if FOR_LIVE:
+        data1 = pd.read_csv(file1)  # Drop rows with missing values
+        data2 = pd.read_csv(file2)
+    else:
+        data1 = pd.read_csv(file1).dropna(axis=0)  # Drop rows with missing values
+        data2 = pd.read_csv(file2).dropna(axis=0)
+
+    concatenated = pd.concat([data1, data2])  # Concatenate both DataFrames
+    return concatenated
 
 def load_and_preprocess_data(*, file2, FOR_LIVE=False):
     """
@@ -1122,7 +1142,7 @@ def calculate_returns_V(*, stock_dict, df, weights, mom, half, mult, w):
     return pd.Series(returns) * 100
 
 
-def makeFinalDf(*, parallel_results):
+def makeFinalDf(*, parallel_results,number=0):
     """
     Combine parallel processing results into a final DataFrame and calculate returns.
 
@@ -1140,11 +1160,11 @@ def makeFinalDf(*, parallel_results):
 
     final_df = pd.concat(all_results)
     final_df.reset_index(inplace=True)
-
-    number=1
+    
+    number=number+1
     df = final_df
     df['Date'] = pd.to_datetime(df['Date'])
-    df = df[df['Date']<"2024-12-01"]
+    df = df[df['Date']<"2023-08-01"]
 
     # Group by month and get unique dates
     df['YearMonth'] = df['Date'].dt.to_period('M')

@@ -9,7 +9,7 @@ project_root = os.path.join(project_root, '..')  # Move one level up to the root
 sys.path.append(project_root)
 
 from definitions.constants import DIFF_REBALANCING_BONDS_DATA_ENRICHED_CSV, DIFF_REBALANCING_COMBINED_DATA_CSV, DIFF_REBALANCING_STOCK_DICT_PKL, EXP_WEIGHT, DIFF_REBALANCING_RETURNS_PKL,  SELECTED_HALF_LIFE_WINDOW, SELECTED_MOM_WINDOW, SELECTED_N_STOCK_CHOSE, DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV, SELECTED_N_STOCK_POSITIVE
-from utils.custom import calculate_returns, calculate_stock_selection, exponential_weights, load_and_preprocess_data
+from utils.custom import calculate_returns, calculate_stock_selection, exponential_weights, load_and_preprocess_data_M
 
 import pickle
 
@@ -36,7 +36,7 @@ def main(number):
 
     stocks_filename=DIFF_REBALANCING_STOCKS_DATA_ENRICHED_CSV + str(number) + ".csv"
 
-    df = load_and_preprocess_data(file1 = bonds_filename, file2=stocks_filename)
+    df = load_and_preprocess_data_M(file1 = bonds_filename, file2=stocks_filename)
 
     filename=DIFF_REBALANCING_COMBINED_DATA_CSV + str(number) + ".csv"
     df.to_csv(filename, index=False)
